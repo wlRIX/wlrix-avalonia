@@ -1,0 +1,27 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <ControlTheme x:Key="{x:Type ToolTip}" TargetType="ToolTip">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="MaxWidth" Value="400" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised"
+                                 BevelThickness="1"
+                                 OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                 Padding="6,3">
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      TextElement.Foreground="{DynamicResource WlrixForeground}" />
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

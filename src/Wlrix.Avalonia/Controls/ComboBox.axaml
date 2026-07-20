@@ -1,0 +1,109 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <ControlTheme x:Key="{x:Type ComboBoxItem}" TargetType="ComboBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Padding" Value="8,3" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Root" Background="{TemplateBinding Background}">
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:selected /template/ Border#Root">
+            <Setter Property="Background" Value="{DynamicResource WlrixSelection}" />
+        </Style>
+        <Style Selector="^:pointerover /template/ Border#Root">
+            <Setter Property="Background" Value="{DynamicResource WlrixSelection}" />
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+        </Style>
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+        </Style>
+        <!-- The descendant selectors that keep highlighted-row text legible (outranking the
+             global "TextBlock" style) live in WlrixTheme.axaml; a ControlTheme may not contain
+             descendant selectors. -->
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type ComboBox}" TargetType="ComboBox">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Padding" Value="8,3" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <wlrix:BevelBorder Name="Bevel"
+                                     Bevel="Raised"
+                                     BevelThickness="2"
+                                     OuterLineThickness="1"
+                                     Background="{DynamicResource WlrixFace}"
+                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                     DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                     OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                        <DockPanel>
+                            <!-- Drop indicator: a small raised tab with a down arrow -->
+                            <wlrix:BevelBorder DockPanel.Dock="Right"
+                                             Width="20"
+                                             Margin="4,2,0,2"
+                                             Bevel="Raised"
+                                             BevelThickness="2"
+                                             Background="{DynamicResource WlrixFace}"
+                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                             DarkBrush="{DynamicResource WlrixBottomShadow}">
+                                <Path Data="M 0,0 L 10,0 L 5,6 Z"
+                                      Fill="{DynamicResource WlrixForeground}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
+                            </wlrix:BevelBorder>
+
+                            <ContentControl Content="{TemplateBinding SelectionBoxItem}"
+                                            ContentTemplate="{TemplateBinding ItemTemplate}"
+                                            Margin="{TemplateBinding Padding}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </DockPanel>
+                    </wlrix:BevelBorder>
+
+                    <Popup Name="PART_Popup"
+                           WindowManagerAddShadowHint="False"
+                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                           MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                           Placement="Bottom">
+                        <wlrix:BevelBorder Bevel="Raised"
+                                         BevelThickness="2"
+                                         OuterLineThickness="1"
+                                         MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                                         Background="{DynamicResource WlrixFace}"
+                                         LightBrush="{DynamicResource WlrixTopShadow}"
+                                         DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                         OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                            <ScrollViewer>
+                                <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
+                            </ScrollViewer>
+                        </wlrix:BevelBorder>
+                    </Popup>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pressed /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

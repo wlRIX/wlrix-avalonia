@@ -1,0 +1,17 @@
+<Project>
+    <PropertyGroup>
+        <!-- Enable central package management, https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management -->
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="Avalonia" Version="12.0.3" />
+        <PackageVersion Include="Avalonia.Desktop" Version="12.0.3" />
+        <PackageVersion Include="Avalonia.Headless" Version="12.0.3" />
+        <PackageVersion Include="Avalonia.Skia" Version="12.0.3" />
+        <!-- No Avalonia.Themes.Fluent: the theme is standalone and templates
+             every control it supports from scratch. -->
+        <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.0.3" />
+        <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.1" />
+        <PackageVersion Include="ReactiveUI.Avalonia" Version="11.3.8" />
+    </ItemGroup>
+</Project>

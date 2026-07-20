@@ -1,0 +1,63 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <ControlTheme x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixViewForeground}" />
+        <Setter Property="Padding" Value="6,1" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="Root" Background="{TemplateBinding Background}">
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:selected /template/ Border#Root">
+            <Setter Property="Background" Value="{DynamicResource WlrixSelection}" />
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+        </Style>
+        <!-- The auto-generated content text picks up its color from the global "TextBlock"
+             style; the descendant selector that restores the selection foreground lives in
+             WlrixTheme.axaml (a ControlTheme may not contain descendant selectors). -->
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixViewForeground}" />
+        <Setter Property="Padding" Value="2" />
+        <!-- Defaults; consumers can override per-instance. Horizontal is disabled, so plain
+             lists get no spurious bar and width-constrained panels (e.g., WrapPanel) wrap. -->
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Sunken"
+                                 BevelThickness="2"
+                                 OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixViewBackground}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <ScrollViewer
+                        HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                        VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
+                        <ItemsPresenter Name="PART_ItemsPresenter"
+                                        Margin="{TemplateBinding Padding}" ItemsPanel="{TemplateBinding ItemsPanel}" />
+                    </ScrollViewer>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,19 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+    <!-- A raised draggable divider bar. -->
+    <ControlTheme x:Key="{x:Type GridSplitter}" TargetType="GridSplitter">
+        <Setter Property="Background" Value="{DynamicResource WlrixFace}" />
+        <Setter Property="MinWidth" Value="6" />
+        <Setter Property="MinHeight" Value="6" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>
+

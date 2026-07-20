@@ -1,5 +1,13 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Wlrix.Avalonia/Wlrix.Avalonia.csproj" />
+    <Project Path="src/Wlrix.Avalonia.Controls.ColorPicker/Wlrix.Avalonia.Controls.ColorPicker.csproj" />
+    <Project Path="src/Wlrix.Avalonia.Dialogs/Wlrix.Avalonia.Dialogs.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/Wlrix.Demo/Wlrix.Demo.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/shot/shot.csproj" />
   </Folder>
 </Solution>

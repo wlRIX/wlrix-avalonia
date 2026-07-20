@@ -1,0 +1,104 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conv="using:Wlrix.Avalonia.Converters"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+    <conv:IndentConverter x:Key="WlrixTreeIndentConverter" Indent="16" />
+
+    <!-- Square +/- expander toggle, IRIX style. -->
+    <ControlTheme x:Key="WlrixTreeExpandToggle" TargetType="ToggleButton">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Width" Value="11" />
+        <Setter Property="Height" Value="11" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised" BevelThickness="1" OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <Panel>
+                        <!-- Horizontal bar (always present = the minus) -->
+                        <Rectangle Width="5" Height="1"
+                                   Fill="{DynamicResource WlrixForeground}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <!-- Vertical bar (present only when collapsed = makes a plus) -->
+                        <Rectangle Name="VBar" Width="1" Height="5"
+                                   Fill="{DynamicResource WlrixForeground}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Panel>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:checked /template/ Rectangle#VBar">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type TreeViewItem}" TargetType="TreeViewItem">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixViewForeground}" />
+        <Setter Property="Padding" Value="4,1" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <StackPanel>
+                    <Border Name="PART_LayoutRoot"
+                            Background="{TemplateBinding Background}"
+                            Focusable="True">
+                        <Grid Name="PART_Header"
+                              ColumnDefinitions="Auto,Auto,*"
+                              Margin="{TemplateBinding Level, Mode=OneWay, Converter={StaticResource WlrixTreeIndentConverter}}">
+                            <ToggleButton Name="PART_ExpandCollapseChevron"
+                                          Grid.Column="0"
+                                          Theme="{StaticResource WlrixTreeExpandToggle}"
+                                          VerticalAlignment="Center"
+                                          Margin="2,0,4,0"
+                                          IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}" />
+                            <ContentPresenter Name="PART_HeaderPresenter"
+                                              Grid.Column="2"
+                                              Content="{TemplateBinding Header}"
+                                              ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                              Padding="{TemplateBinding Padding}"
+                                              VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                    IsVisible="{TemplateBinding IsExpanded}"
+                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+
+        <!-- Leaf nodes hide the toggle -->
+        <Style Selector="^:empty /template/ ToggleButton#PART_ExpandCollapseChevron">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="^:selected /template/ Border#PART_LayoutRoot">
+            <Setter Property="Background" Value="{DynamicResource WlrixSelection}" />
+        </Style>
+        <Style Selector="^:selected /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type TreeView}" TargetType="TreeView">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixViewForeground}" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Sunken" BevelThickness="2" OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixViewBackground}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                                  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
+                        <ItemsPresenter Name="PART_ItemsPresenter"
+                                        Margin="{TemplateBinding Padding}"
+                                        ItemsPanel="{TemplateBinding ItemsPanel}" />
+                    </ScrollViewer>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>
+

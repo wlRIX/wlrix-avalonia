@@ -1,0 +1,240 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conv="using:Avalonia.Controls.Converters"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <conv:PlatformKeyGestureConverter x:Key="WlrixKeyGestureConverter" />
+
+    <!-- Shared raised-bevel container for drop-down / context menu panels. -->
+    <ControlTheme x:Key="WlrixMenuFlyoutPresenter" TargetType="wlrix:BevelBorder">
+        <Setter Property="Bevel" Value="Raised" />
+        <Setter Property="BevelThickness" Value="2" />
+        <Setter Property="OuterLineThickness" Value="1" />
+        <Setter Property="Background" Value="{DynamicResource WlrixFace}" />
+        <Setter Property="LightBrush" Value="{DynamicResource WlrixTopShadow}" />
+        <Setter Property="DarkBrush" Value="{DynamicResource WlrixBottomShadow}" />
+        <Setter Property="OuterLineBrush" Value="{DynamicResource WlrixOuterLine}" />
+    </ControlTheme>
+
+    <!-- =================== Top-level menu item (on the bar) =================== -->
+    <ControlTheme x:Key="WlrixTopLevelMenuItem" TargetType="MenuItem">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Padding" Value="8,3" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Name="Bevel"
+                                 Bevel="Raised"
+                                 BevelThickness="2"
+                                 Background="Transparent"
+                                 LightBrush="Transparent"
+                                 DarkBrush="Transparent">
+                    <Panel>
+                        <ContentPresenter Name="PART_HeaderPresenter"
+                                          Content="{TemplateBinding Header}"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center">
+                            <ContentPresenter.DataTemplates>
+                                <DataTemplate DataType="x:String">
+                                    <AccessText Text="{Binding}" />
+                                </DataTemplate>
+                            </ContentPresenter.DataTemplates>
+                        </ContentPresenter>
+
+                        <Popup Name="PART_Popup"
+                               WindowManagerAddShadowHint="False"
+                               Placement="BottomEdgeAlignedLeft"
+                               IsLightDismissEnabled="True"
+                               IsOpen="{TemplateBinding IsSubMenuOpen, Mode=TwoWay}">
+                            <wlrix:BevelBorder Theme="{StaticResource WlrixMenuFlyoutPresenter}" Padding="2">
+                                <ScrollViewer>
+                                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                                    KeyboardNavigation.TabNavigation="Continue" />
+                                </ScrollViewer>
+                            </wlrix:BevelBorder>
+                        </Popup>
+                    </Panel>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+
+        <!-- Armed/selected: light up the (always-reserved) raised bevel on the menu title -->
+        <Style Selector="^:selected /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Background" Value="{DynamicResource WlrixFace}" />
+            <Setter Property="LightBrush" Value="{DynamicResource WlrixTopShadow}" />
+            <Setter Property="DarkBrush" Value="{DynamicResource WlrixBottomShadow}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- ===================== Nested menu item (in a flyout) ==================== -->
+    <ControlTheme x:Key="{x:Type MenuItem}" TargetType="MenuItem">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Padding" Value="4,3" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <!-- The bevel is always present (so the item never changes size); its edges
+                     are transparent until the item is selected, when they light up raised. -->
+                <wlrix:BevelBorder Name="Root"
+                                 Bevel="Raised"
+                                 BevelThickness="2"
+                                 Background="Transparent"
+                                 LightBrush="Transparent"
+                                 DarkBrush="Transparent">
+                    <Grid Margin="{TemplateBinding Padding}"
+                          ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                        <!-- Check / radio marker -->
+                        <ContentControl Name="PART_ToggleIconPresenter"
+                                        Grid.Column="0"
+                                        IsVisible="False"
+                                        Width="14" Height="14"
+                                        VerticalAlignment="Center">
+                            <Panel>
+                                <Path Name="ToggleCheck"
+                                      Data="M 0,4 L 3,8 L 9,0"
+                                      Stroke="{DynamicResource WlrixForeground}"
+                                      StrokeThickness="2"
+                                      IsVisible="False"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
+                            </Panel>
+                        </ContentControl>
+
+                        <!-- Optional icon -->
+                        <ContentControl Name="PART_IconPresenter"
+                                        Grid.Column="1"
+                                        Content="{TemplateBinding Icon}"
+                                        Margin="0,0,6,0"
+                                        VerticalAlignment="Center" />
+
+                        <!-- Header -->
+                        <ContentPresenter Name="PART_HeaderPresenter"
+                                          Grid.Column="2"
+                                          Content="{TemplateBinding Header}"
+                                          VerticalAlignment="Center">
+                            <ContentPresenter.DataTemplates>
+                                <DataTemplate DataType="x:String">
+                                    <AccessText Text="{Binding}" />
+                                </DataTemplate>
+                            </ContentPresenter.DataTemplates>
+                        </ContentPresenter>
+
+                        <!-- Input gesture (shortcut) -->
+                        <TextBlock Name="PART_InputGestureText"
+                                   Grid.Column="3"
+                                   Margin="24,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource WlrixDisabledForeground}"
+                                   Text="{TemplateBinding InputGesture, Converter={StaticResource WlrixKeyGestureConverter}}" />
+
+                        <!-- Submenu chevron (hidden for leaf items via the :empty selector) -->
+                        <Path Name="PART_ChevronPath"
+                              Grid.Column="4"
+                              Data="M 0,0 L 4,4 L 0,8 Z"
+                              Fill="{DynamicResource WlrixForeground}"
+                              Margin="12,0,0,0"
+                              VerticalAlignment="Center" />
+
+                        <Popup Name="PART_Popup"
+                               WindowManagerAddShadowHint="False"
+                               Placement="RightEdgeAlignedTop"
+                               IsLightDismissEnabled="False"
+                               IsOpen="{TemplateBinding IsSubMenuOpen, Mode=TwoWay}">
+                            <wlrix:BevelBorder Theme="{StaticResource WlrixMenuFlyoutPresenter}" Padding="2">
+                                <ScrollViewer>
+                                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                                    KeyboardNavigation.TabNavigation="Continue" />
+                                </ScrollViewer>
+                            </wlrix:BevelBorder>
+                        </Popup>
+                    </Grid>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+
+        <!-- Separator item -->
+        <Style Selector="^:separator">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <wlrix:BevelBorder Bevel="Etched"
+                                     BevelThickness="2"
+                                     Height="2"
+                                     Margin="4,3"
+                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                     DarkBrush="{DynamicResource WlrixBottomShadow}" />
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <!-- Selection lights up the raised bevel (IRIX style); the reserved edge space is
+             always present so selecting an item does not change its size. -->
+        <Style Selector="^:selected /template/ wlrix|BevelBorder#Root">
+            <Setter Property="Background" Value="{DynamicResource WlrixFace}" />
+            <Setter Property="LightBrush" Value="{DynamicResource WlrixTopShadow}" />
+            <Setter Property="DarkBrush" Value="{DynamicResource WlrixBottomShadow}" />
+        </Style>
+
+        <!-- Leaf items (no submenu) hide the chevron -->
+        <Style Selector="^:empty /template/ Path#PART_ChevronPath">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <!-- Toggle / radio check marks -->
+        <Style Selector="^:toggle /template/ ContentControl#PART_ToggleIconPresenter">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:radio /template/ ContentControl#PART_ToggleIconPresenter">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:checked /template/ Path#ToggleCheck">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+        <Style Selector="^:disabled /template/ wlrix|BevelBorder#Root">
+            <Setter Property="Opacity" Value="0.6" />
+        </Style>
+    </ControlTheme>
+
+    <!-- ============================ Menu (the bar) ============================ -->
+    <ControlTheme x:Key="{x:Type Menu}" TargetType="Menu">
+        <Setter Property="Background" Value="{DynamicResource WlrixFace}" />
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="ItemContainerTheme" Value="{StaticResource WlrixTopLevelMenuItem}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised"
+                                 BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="2,1">
+                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                    KeyboardNavigation.TabNavigation="Continue" />
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- ============================ ContextMenu ============================== -->
+    <ControlTheme x:Key="{x:Type ContextMenu}" TargetType="ContextMenu">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Theme="{StaticResource WlrixMenuFlyoutPresenter}" Padding="2">
+                    <ScrollViewer>
+                        <ItemsPresenter Name="PART_ItemsPresenter"
+                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                        KeyboardNavigation.TabNavigation="Continue" />
+                    </ScrollViewer>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

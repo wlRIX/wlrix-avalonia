@@ -1,0 +1,36 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ControlTheme x:Key="{x:Type ScrollViewer}" TargetType="ScrollViewer">
+        <!-- A non-null (transparent) background makes the content presenter hit-test visible across
+             the whole viewport, so the mouse wheel scrolls even when the pointer is over empty space
+             between/around items rather than only over the items themselves. -->
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
+                    <ScrollContentPresenter Name="PART_ContentPresenter"
+                                            Grid.Row="0" Grid.Column="0"
+                                            Background="{TemplateBinding Background}"
+                                            Margin="{TemplateBinding Padding}"
+                                            HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
+                                            VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}"
+                                            HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
+                                            VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                    <ScrollBar Name="PART_VerticalScrollBar"
+                               Grid.Row="0" Grid.Column="1"
+                               Orientation="Vertical"
+                               AllowAutoHide="{TemplateBinding AllowAutoHide}" />
+                    <ScrollBar Name="PART_HorizontalScrollBar"
+                               Grid.Row="1" Grid.Column="0"
+                               Orientation="Horizontal"
+                               AllowAutoHide="{TemplateBinding AllowAutoHide}" />
+                    <Panel Grid.Row="1" Grid.Column="1"
+                           Background="{DynamicResource WlrixFace}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

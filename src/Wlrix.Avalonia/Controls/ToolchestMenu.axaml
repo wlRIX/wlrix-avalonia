@@ -1,0 +1,81 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <!--
+        IRIX "Toolchest" top-level menu item: a vertical menu button whose submenu flies out to
+        the right, with a small raised "drawer handle" glyph on the right edge. Visual only — a
+        consumer binds Header / ItemsSource / Command via a theme BasedOn this one, and stacks the
+        items with a vertical Menu ItemsPanel. All colours come from the active scheme, so it
+        tracks global colour-scheme changes like the rest of the theme.
+    -->
+    <ControlTheme x:Key="WlrixToolchestMenuItem" TargetType="MenuItem">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="FontStyle" Value="Italic" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="8,3" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Name="Bevel"
+                                 Bevel="Raised"
+                                 BevelThickness="2"
+                                 Background="Transparent"
+                                 LightBrush="Transparent"
+                                 DarkBrush="Transparent">
+                    <Panel>
+                        <DockPanel>
+                            <!-- The "drawer handle" submenu glyph. -->
+                            <wlrix:BevelBorder DockPanel.Dock="Right"
+                                             Bevel="Raised" BevelThickness="2"
+                                             Width="11" Height="11"
+                                             Margin="16,0,0,0"
+                                             VerticalAlignment="Center"
+                                             Background="{DynamicResource WlrixFace}"
+                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                             DarkBrush="{DynamicResource WlrixBottomShadow}" />
+                            <ContentPresenter Name="PART_HeaderPresenter"
+                                              Content="{TemplateBinding Header}"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="Center">
+                                <ContentPresenter.DataTemplates>
+                                    <DataTemplate DataType="x:String">
+                                        <AccessText Text="{Binding}" />
+                                    </DataTemplate>
+                                </ContentPresenter.DataTemplates>
+                            </ContentPresenter>
+                        </DockPanel>
+
+                        <Popup Name="PART_Popup"
+                               WindowManagerAddShadowHint="False"
+                               Placement="RightEdgeAlignedTop"
+                               IsLightDismissEnabled="True"
+                               IsOpen="{TemplateBinding IsSubMenuOpen, Mode=TwoWay}">
+                            <wlrix:BevelBorder Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                             Padding="2"
+                                             Background="{DynamicResource WlrixFace}"
+                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                             DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                             OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                                <ScrollViewer>
+                                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                                    KeyboardNavigation.TabNavigation="Continue" />
+                                </ScrollViewer>
+                            </wlrix:BevelBorder>
+                        </Popup>
+                    </Panel>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+
+        <!-- Armed/selected: light up the raised bevel (IRIX style). -->
+        <Style Selector="^:selected /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Background" Value="{DynamicResource WlrixFace}" />
+            <Setter Property="LightBrush" Value="{DynamicResource WlrixTopShadow}" />
+            <Setter Property="DarkBrush" Value="{DynamicResource WlrixBottomShadow}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

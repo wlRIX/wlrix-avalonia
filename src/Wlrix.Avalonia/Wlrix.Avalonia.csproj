@@ -1,27 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- TargetFramework / ImplicitUsings / Nullable come from Directory.Build.props. -->
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <RootNamespace>Wlrix.Avalonia</RootNamespace>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 
     <!-- NuGet packaging metadata (theme is meant to be consumed as a package). -->
     <PackageId>Wlrix.Avalonia</PackageId>
     <Version>0.0.0</Version>
     <Authors>wlRIX contributors</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Avalonia control theme implementing the IRIX Indigo Magic visual language for wlRIX.</Description>
+    <Description>Avalonia control theme for wlRIX: chiselled bevels, hard outlines, and the wlRIX Classic palette.</Description>
     <RepositoryUrl>https://github.com/wlrix/wlrix-avalonia</RepositoryUrl>
   </PropertyGroup>
 
-  <!--
-    Avalonia is added on import of the existing theme. Kept out of the initial
-    scaffold so `dotnet build` succeeds with no NuGet access. When importing:
-    <ItemGroup>
-      <PackageReference Include="Avalonia" Version="11.*" />
-      <PackageReference Include="Avalonia.Themes.Fluent" Version="11.*" />
-    </ItemGroup>
-  -->
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+  </ItemGroup>
 
 </Project>

@@ -1,0 +1,140 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <!-- ==== Thumbwheel sizing constants (tweak these to tune the wheel proportions) ====
+         CoverSize  : the cross-axis size (px) of the raised cover surround and the square
+                      home button. The cover has a 3px frame per side (1px outline + 2px bevel).
+         WheelInset : the gap (px) of visible cover face on EACH cross-axis side of the wheel,
+                      between the cover's inner frame and the wheel. So the wheel's cross-axis
+                      size = CoverSize - 6 (cover frame) - 2*WheelInset.
+                      e.g., CoverSize 24, WheelInset 3  ->  wheel = 24 - 6 - 6 = 12 (~50%).
+                            CoverSize 24, WheelInset 0  ->  wheel = 24 - 6     = 18 (~75%).
+         The Margin resources inset the wheel within the COVER on all sides it specifies; the
+         wheel stretches to fill whatever the cover leaves (the long-axis margin gives the gap
+         at the cover's ends, the cross-axis margin narrows the wheel). The cover and wheel are
+         independent of the home button, which lives in its own row/column below/beside the
+         cover, so the margin never has to share space with it.
+         WheelLength is the control's minimum length along the rolling axis (a default when no
+         explicit size is set); the cover then fills that minus the home button. -->
+    <sys:Double x:Key="WlrixThumbwheelCoverSize">20</sys:Double>
+    <sys:Double x:Key="WlrixThumbwheelWheelLength">110</sys:Double>
+    <Thickness x:Key="WlrixThumbwheelWheelMarginVertical">3,8</Thickness>
+    <Thickness x:Key="WlrixThumbwheelWheelMarginHorizontal">8,3</Thickness>
+
+    <!-- Small square home button; a raised tab that sinks when pressed (cf. WlrixPathNub). -->
+    <ControlTheme x:Key="WlrixThumbwheelHome" TargetType="Button">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Name="Bevel"
+                                 Bevel="Raised"
+                                 BevelThickness="2"
+                                 OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <!-- A tiny inset square: the "home" detail -->
+                    <wlrix:BevelBorder Bevel="Sunken"
+                                     BevelThickness="1"
+                                     Width="4" Height="4"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Background="{DynamicResource WlrixSelect}"
+                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                     DarkBrush="{DynamicResource WlrixBottomShadow}" />
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pressed /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Bevel" Value="Sunken" />
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type wlrix:Thumbwheel}" TargetType="wlrix:Thumbwheel">
+        <Setter Property="LightBrush" Value="{DynamicResource WlrixTopShadow}" />
+        <Setter Property="DarkBrush" Value="{DynamicResource WlrixBottomShadow}" />
+
+        <!-- ============================ Vertical ============================ -->
+        <Style Selector="^:vertical">
+            <Setter Property="MinHeight" Value="{DynamicResource WlrixThumbwheelWheelLength}" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid RowDefinitions="*,Auto" RowSpacing="0" HorizontalAlignment="Center">
+                        <!-- Raised bevel "cover" surround; the wheel sits inside with a
+                             WheelInset gap of cover face on each cross-axis side. The wheel
+                             paints its own sunken trough background for the recess. The cover
+                             row is '*' so it fills the control height minus the home button;
+                             the wheel stretches to fill the cover, so the margin always insets
+                             within the cover (independent of the home button). -->
+                        <wlrix:BevelBorder Grid.Row="0"
+                                         Bevel="Raised"
+                                         BevelThickness="2"
+                                         OuterLineThickness="1"
+                                         Width="{DynamicResource WlrixThumbwheelCoverSize}"
+                                         Background="{DynamicResource WlrixFace}"
+                                         LightBrush="{DynamicResource WlrixTopShadow}"
+                                         DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                         OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                            <wlrix:ThumbwheelSurface Name="PART_Wheel"
+                                                   Margin="{DynamicResource WlrixThumbwheelWheelMarginVertical}"
+                                                   Background="{DynamicResource WlrixTrough}" />
+                        </wlrix:BevelBorder>
+
+                        <!-- Home button: same square size as the surround, butted against it. -->
+                        <Button Name="PART_HomeButton"
+                                Grid.Row="1"
+                                Width="{DynamicResource WlrixThumbwheelCoverSize}"
+                                Height="{DynamicResource WlrixThumbwheelCoverSize}"
+                                HorizontalAlignment="Center"
+                                Theme="{StaticResource WlrixThumbwheelHome}"
+                                IsVisible="{TemplateBinding ShowHomeButton}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <!-- ============================ Horizontal ============================ -->
+        <Style Selector="^:horizontal">
+            <Setter Property="MinWidth" Value="{DynamicResource WlrixThumbwheelWheelLength}" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="0" VerticalAlignment="Center">
+                        <!-- Raised bevel "cover" surround; the wheel sits inside with a
+                             WheelInset gap of cover face on each cross-axis side. The wheel
+                             paints its own sunken trough background for the recess. The cover
+                             column is '*' so it fills the control width minus the home button;
+                             the wheel stretches to fill the cover, so the margin always insets
+                             within the cover (independent of the home button). -->
+                        <wlrix:BevelBorder Grid.Column="0"
+                                         Bevel="Raised"
+                                         BevelThickness="2"
+                                         OuterLineThickness="1"
+                                         Height="{DynamicResource WlrixThumbwheelCoverSize}"
+                                         Background="{DynamicResource WlrixFace}"
+                                         LightBrush="{DynamicResource WlrixTopShadow}"
+                                         DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                         OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                            <wlrix:ThumbwheelSurface Name="PART_Wheel"
+                                                   Margin="{DynamicResource WlrixThumbwheelWheelMarginHorizontal}"
+                                                   Background="{DynamicResource WlrixTrough}" />
+                        </wlrix:BevelBorder>
+
+                        <!-- Home button: same square size as the surround, butted against it. -->
+                        <Button Name="PART_HomeButton"
+                                Grid.Column="1"
+                                Width="{DynamicResource WlrixThumbwheelCoverSize}"
+                                Height="{DynamicResource WlrixThumbwheelCoverSize}"
+                                VerticalAlignment="Center"
+                                Theme="{StaticResource WlrixThumbwheelHome}"
+                                IsVisible="{TemplateBinding ShowHomeButton}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

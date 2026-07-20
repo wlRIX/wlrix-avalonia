@@ -1,0 +1,40 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <!-- IRIX gauge: a sunken trough with a fill that has an angled leading edge, and an
+         optional value label above the trough that follows the fill end. The visuals are drawn
+         by ProgressGauge so the angled end and tracking label are pixel-exact.
+         The fill uses SelectFillColor — IRIX's *lampColor, the same yellow its
+         lit indicators used — rather than the attention red of WlrixAccent. -->
+    <ControlTheme x:Key="{x:Type ProgressBar}" TargetType="ProgressBar">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixSelectFill}" />
+        <Setter Property="MinHeight" Value="14" />
+        <Setter Property="MinWidth" Value="60" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <wlrix:ProgressGauge Minimum="{TemplateBinding Minimum}"
+                                       Maximum="{TemplateBinding Maximum}"
+                                       Value="{TemplateBinding Value}"
+                                       ShowValueText="{TemplateBinding ShowProgressText}"
+                                       TextFormat="{TemplateBinding ProgressTextFormat}"
+                                       FillBrush="{TemplateBinding Foreground}"
+                                       TroughBrush="{DynamicResource WlrixTrough}"
+                                       LightBrush="{DynamicResource WlrixTopShadow}"
+                                       DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                       OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                       TextBrush="{DynamicResource WlrixForeground}" />
+                    <!-- Required by ProgressBar's internal logic; not shown (the gauge draws
+                         the fill itself). -->
+                    <Border Name="PART_Indicator" IsVisible="False" />
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+
+        <!-- Reserve room for the label above the trough when the value text is shown. -->
+        <Style Selector="^[ShowProgressText=True]">
+            <Setter Property="MinHeight" Value="30" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

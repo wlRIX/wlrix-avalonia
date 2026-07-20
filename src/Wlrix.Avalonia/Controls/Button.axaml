@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <ControlTheme x:Key="{x:Type Button}" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="14,3" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Cursor" Value="Arrow" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="DefaultRing"
+                        BorderBrush="{DynamicResource WlrixAccent}"
+                        BorderThickness="0"
+                        Padding="0">
+                    <wlrix:BevelBorder Name="Bevel"
+                                     Bevel="Raised"
+                                     BevelThickness="2"
+                                     OuterLineThickness="1"
+                                     Background="{DynamicResource WlrixFace}"
+                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                     DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                     OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                     Padding="{TemplateBinding Padding}">
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          RecognizesAccessKey="True"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </wlrix:BevelBorder>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <!-- Pressed / armed: invert the bevel and darken the face -->
+        <Style Selector="^:pressed /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Bevel" Value="Sunken" />
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+
+        <!-- Default button: magenta ring (the IRIX default-action indicator) -->
+        <Style Selector="^[IsDefault=true] /template/ Border#DefaultRing">
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="Padding" Value="1" />
+        </Style>
+
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,234 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Wlrix.Demo.ViewModels"
+        xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="780" d:DesignHeight="560"
+        x:Class="Wlrix.Demo.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="780" Height="600"
+        Title="Wlrix.Demo — Theme Gallery">
+
+    <DockPanel Margin="8">
+        <!-- Menu bar -->
+        <Menu DockPanel.Dock="Top" Margin="0,0,0,8">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" InputGesture="Ctrl+O" />
+                <MenuItem Header="_Save" InputGesture="Ctrl+S" />
+                <Separator />
+                <MenuItem Header="_Recent">
+                    <MenuItem Header="project.txt" />
+                    <MenuItem Header="notes.md" />
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="_Quit" InputGesture="Ctrl+Q" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="Cu_t" InputGesture="Ctrl+X" />
+                <MenuItem Header="_Copy" InputGesture="Ctrl+C" />
+                <MenuItem Header="_Paste" InputGesture="Ctrl+V" />
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="Show hidden files" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Scheme switcher bar -->
+        <wlrix:BevelBorder DockPanel.Dock="Top"
+                         Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                         Background="{DynamicResource WlrixFace}"
+                         LightBrush="{DynamicResource WlrixTopShadow}"
+                         DarkBrush="{DynamicResource WlrixBottomShadow}"
+                         OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                         Padding="8" Margin="0,0,0,8">
+            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <TextBlock Text="Color scheme:" FontWeight="Bold" VerticalAlignment="Center" />
+                <ComboBox Name="SchemeBox" Width="180" SelectedIndex="0">
+                    <ComboBoxItem>Classic (gamma 1.7)</ComboBoxItem>
+                    <ComboBoxItem>Classic (gamma 1.0)</ComboBoxItem>
+                    <ComboBoxItem>Classic (gamma 2.4)</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </wlrix:BevelBorder>
+
+        <ScrollViewer>
+            <StackPanel Spacing="10">
+
+                <!-- Path bar (breadcrumb) -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Path bar (click a nub to navigate)" FontWeight="Bold" />
+                        <wlrix:PathBar Path="/usr/people/vic485" />
+                    </StackPanel>
+                </wlrix:BevelBorder>
+
+                <!-- Thumbwheels -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Thumbwheels (drag to roll; home resets)" FontWeight="Bold" />
+                        <StackPanel Orientation="Horizontal" Spacing="24" VerticalAlignment="Top">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Zoom (bounded)" />
+                                <wlrix:Thumbwheel Name="ZoomWheel"
+                                                Orientation="Vertical"
+                                                Minimum="0" Maximum="100" Value="40"
+                                                ShowHomeButton="True" HomeValue="50"
+                                                Height="126" />
+                                <TextBlock Text="{Binding #ZoomWheel.Value, StringFormat='Value: {0:0}'}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <TextBlock Text="Rotate (continuous)" />
+                                <wlrix:Thumbwheel Orientation="Horizontal"
+                                                IsContinuous="True"
+                                                Width="126" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </wlrix:BevelBorder>
+
+                <!-- Color chooser -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Color chooser (drag the hexagon; Sliders menu toggles HSV/RGB)"
+                                   FontWeight="Bold" />
+                        <wlrix:ColorChooser Name="Chooser" Color="#3030D0" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Button Content="OK" IsDefault="True" />
+                            <Button Content="Cancel" />
+                            <Button Content="Help" />
+                            <TextBlock VerticalAlignment="Center"
+                                       Text="{Binding #Chooser.Color, StringFormat='Selected: {0}'}" />
+                        </StackPanel>
+                    </StackPanel>
+                </wlrix:BevelBorder>
+
+                <!-- Message dialogs -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Message dialogs (open a modal dialog)" FontWeight="Bold" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Button Name="ErrorDialogButton" Content="Error" />
+                            <Button Name="QuestionDialogButton" Content="Question" />
+                            <Button Name="WarningDialogButton" Content="Warning" />
+                            <Button Name="InfoDialogButton" Content="Information" />
+                        </StackPanel>
+                    </StackPanel>
+                </wlrix:BevelBorder>
+
+                <!-- Buttons -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Push buttons" FontWeight="Bold" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Button Content="OK" IsDefault="True" />
+                            <Button Content="Apply" />
+                            <Button Content="Cancel" />
+                            <Button Content="Help" />
+                            <Button Content="Disabled" IsEnabled="False" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <ToggleButton Content="Normal toggle" />
+                            <ToggleButton Theme="{StaticResource WlrixLedButton}" Content="LED button" IsChecked="True" />
+                        </StackPanel>
+                    </StackPanel>
+                </wlrix:BevelBorder>
+
+                <!-- Toggles -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <Grid ColumnDefinitions="*,*">
+                        <StackPanel Grid.Column="0" Spacing="6">
+                            <TextBlock Text="Check boxes" FontWeight="Bold" />
+                            <CheckBox Content="Emulate tabs" IsChecked="True" />
+                            <CheckBox Content="Use tab characters" />
+                            <CheckBox Content="Mixed state" IsChecked="{x:Null}" />
+                            <CheckBox Content="Disabled" IsEnabled="False" IsChecked="True" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="6">
+                            <TextBlock Text="Radio buttons" FontWeight="Bold" />
+                            <RadioButton GroupName="fmt" Content="Unix" IsChecked="True" />
+                            <RadioButton GroupName="fmt" Content="DOS" />
+                            <RadioButton GroupName="fmt" Content="Macintosh" />
+                            <RadioButton GroupName="fmt" Content="Disabled" IsEnabled="False" />
+                        </StackPanel>
+                    </Grid>
+                </wlrix:BevelBorder>
+
+                <!-- Text + combo -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Text fields and option menu" FontWeight="Bold" />
+                        <TextBox Text="/usr/people/guest" />
+                        <TextBox PlaceholderText="String to find..." />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Format:" VerticalAlignment="Center" />
+                            <ComboBox Width="160" SelectedIndex="0">
+                                <ComboBoxItem>Unix</ComboBoxItem>
+                                <ComboBoxItem>DOS</ComboBoxItem>
+                                <ComboBoxItem>Macintosh</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                </wlrix:BevelBorder>
+
+                <!-- List -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="File list (right-click for a context menu)" FontWeight="Bold" />
+                        <ListBox Height="130" SelectedIndex="2">
+                            <ListBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Open" />
+                                    <MenuItem Header="Rename" />
+                                    <Separator />
+                                    <MenuItem Header="Delete" />
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+                            <ListBoxItem>.Xauthority</ListBoxItem>
+                            <ListBoxItem>.Xdefaults</ListBoxItem>
+                            <ListBoxItem>.bash_history</ListBoxItem>
+                            <ListBoxItem>.bash_profile</ListBoxItem>
+                            <ListBoxItem>.cshrc</ListBoxItem>
+                            <ListBoxItem>epic.mp3</ListBoxItem>
+                            <ListBoxItem>install.log</ListBoxItem>
+                            <ListBoxItem>install.log.syslog</ListBoxItem>
+                        </ListBox>
+                    </StackPanel>
+                </wlrix:BevelBorder>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <!--
+        A breadcrumb "nub": a small raised tab that sits above the path field. The notch at
+        the bottom (a thin dark line) and the raised bevel make it read as a draggable tab,
+        matching the IRIX file-manager path bar.
+    -->
+    <ControlTheme x:Key="WlrixPathNub" TargetType="Button">
+        <Setter Property="Height" Value="9" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Name="Bevel"
+                                 Bevel="Raised"
+                                 BevelThickness="2"
+                                 OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pressed /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Bevel" Value="Sunken" />
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+        <Style Selector="^:pointerover /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Background" Value="{DynamicResource WlrixTopShadow}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type wlrix:PathBar}" TargetType="wlrix:PathBar">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="9,Auto" RowSpacing="-1">
+                    <!-- Breadcrumb nubs are positioned by code-behind to line up with the
+                         text segments below. The negative row spacing tucks them onto the
+                         top edge of the field. -->
+                    <Canvas Name="PART_Nubs"
+                            Grid.Row="0"
+                            Height="9"
+                            ClipToBounds="False" />
+
+                    <TextBox Name="PART_TextBox"
+                             Grid.Row="1"
+                             Text="{Binding Path, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

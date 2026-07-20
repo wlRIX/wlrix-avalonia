@@ -1,0 +1,94 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+    <!-- Small raised spin button (up/down arrow). -->
+    <ControlTheme x:Key="WlrixSpinnerButton" TargetType="RepeatButton">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Width" Value="17" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Name="Bevel"
+                                 Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <ContentPresenter Content="{TemplateBinding Content}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pressed /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Bevel" Value="Sunken" />
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type ButtonSpinner}" TargetType="ButtonSpinner">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixTextForeground}" />
+        <Setter Property="Background" Value="{DynamicResource WlrixTextBackground}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Sunken" BevelThickness="2" OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixTextBackground}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <DockPanel>
+                        <UniformGrid Name="PART_SpinnerPanel"
+                                     DockPanel.Dock="Right"
+                                     Rows="2"
+                                     Margin="2,0,0,0"
+                                     IsVisible="{TemplateBinding ShowButtonSpinner}">
+                            <RepeatButton Name="PART_IncreaseButton"
+                                          Theme="{StaticResource WlrixSpinnerButton}">
+                                <Path Data="M 0,5 L 5,0 L 10,5 Z"
+                                      Fill="{DynamicResource WlrixForeground}" />
+                            </RepeatButton>
+                            <RepeatButton Name="PART_DecreaseButton"
+                                          Theme="{StaticResource WlrixSpinnerButton}">
+                                <Path Data="M 0,0 L 10,0 L 5,5 Z"
+                                      Fill="{DynamicResource WlrixForeground}" />
+                            </RepeatButton>
+                        </UniformGrid>
+
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          Padding="4,2"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalContentAlignment="Stretch" />
+                    </DockPanel>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:left /template/ UniformGrid#PART_SpinnerPanel">
+            <Setter Property="DockPanel.Dock" Value="Left" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type NumericUpDown}" TargetType="NumericUpDown">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixTextForeground}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ButtonSpinner Name="PART_Spinner"
+                               HorizontalContentAlignment="Stretch"
+                               VerticalContentAlignment="Stretch"
+                               AllowSpin="{TemplateBinding AllowSpin}"
+                               ShowButtonSpinner="{TemplateBinding ShowButtonSpinner}"
+                               ButtonSpinnerLocation="{TemplateBinding ButtonSpinnerLocation}">
+                    <TextBox Name="PART_TextBox"
+                             Theme="{StaticResource WlrixPlainTextBox}"
+                             VerticalContentAlignment="Center"
+                             Text="{TemplateBinding Text}"
+                             PlaceholderText="{TemplateBinding Watermark}"
+                             IsReadOnly="{TemplateBinding IsReadOnly}" />
+                </ButtonSpinner>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>
+

@@ -1,0 +1,76 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Wlrix.Avalonia.WlrixTheme">
+    <Styles.Resources>
+        <ResourceDictionary>
+            <FontFamily x:Key="WlrixFontFamily">Helvetica, Arial, Liberation Sans, sans-serif</FontFamily>
+
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Default scheme (fallback; an app may override these keys in Application.Resources) -->
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Schemes/Classic.axaml" />
+                <!-- Brushes are scheme-independent: each points at a Color key
+                     above via DynamicResource, so swapping the scheme above
+                     repoints all of them. -->
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Schemes/Brushes.axaml" />
+
+                <!-- Control themes -->
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Button.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/RepeatButton.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToggleButton.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/CheckBox.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/RadioButton.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/TextBox.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ScrollViewer.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ScrollBar.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ListBox.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ComboBox.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Slider.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ProgressBar.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/TabControl.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/TreeView.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Expander.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/GridSplitter.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/NumericUpDown.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/PathBar.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Thumbwheel.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToolTip.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Menu.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToolchestMenu.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+
+    <!-- Global defaults -->
+    <!-- Windows and panels sit on BasicBackground; buttons sit on the darker
+         ButtonBackground. IRIX kept these distinct and the contrast between
+         them is a signature of the look. -->
+    <Style Selector="Window">
+        <Setter Property="Background" Value="{DynamicResource WlrixPanel}" />
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="FontFamily" Value="{DynamicResource WlrixFontFamily}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <Style Selector="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+    </Style>
+
+    <Style Selector="Label">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+    </Style>
+    
+    <!-- The global TextBlock foreground above targets the auto-generated content text of
+         items directly, which would otherwise beat the item's inherited selection foreground
+         and leave selected/highlighted rows low-contrast. These more specific descendant
+         selectors restore the selection color. (Descendant selectors can't live inside a
+         ControlTheme, so they belong here.) -->
+    <Style Selector="ListBoxItem:selected TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+    </Style>
+    <Style Selector="ComboBoxItem:selected TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+    </Style>
+    <Style Selector="ComboBoxItem:pointerover TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+    </Style>
+</Styles>

@@ -1,0 +1,133 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+    <!-- Invisible page-step buttons that fill the trough on either side of the thumb. -->
+    <ControlTheme x:Key="WlrixSliderTrackButton" TargetType="RepeatButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!-- Raised draggable thumb that fits inside the sunken trough, with a single raised ridge
+         across its center (like the scrollbar thumb's grip). -->
+    <ControlTheme x:Key="WlrixSliderThumbHorizontal" TargetType="Thumb">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                 Width="30" Height="15"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <!-- Single vertical ridge -->
+                    <wlrix:BevelBorder Width="2" Height="8" Bevel="Raised" BevelThickness="1"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                     DarkBrush="{DynamicResource WlrixBottomShadow}" />
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="WlrixSliderThumbVertical" TargetType="Thumb">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                 Width="15" Height="30"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <!-- Single horizontal ridge -->
+                    <wlrix:BevelBorder Width="8" Height="2" Bevel="Raised" BevelThickness="1"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                     DarkBrush="{DynamicResource WlrixBottomShadow}" />
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type Slider}" TargetType="Slider">
+        <Setter Property="Background" Value="{DynamicResource WlrixTrough}" />
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+
+        <Style Selector="^:horizontal">
+            <Setter Property="MinHeight" Value="21" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid RowDefinitions="*,Auto,*">
+                        <!-- Sunken trough; the thumb nests inside it -->
+                        <wlrix:BevelBorder Grid.Row="1"
+                                         Bevel="Sunken" BevelThickness="1" OuterLineThickness="1"
+                                         Height="19"
+                                         VerticalAlignment="Center"
+                                         Background="{DynamicResource WlrixTrough}"
+                                         LightBrush="{DynamicResource WlrixTopShadow}"
+                                         DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                         OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+
+                        <Track Name="PART_Track"
+                               Grid.Row="1"
+                               Minimum="{TemplateBinding Minimum}"
+                               Maximum="{TemplateBinding Maximum}"
+                               Value="{TemplateBinding Value, Mode=TwoWay}"
+                               Orientation="Horizontal"
+                               IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+                            <Track.DecreaseButton>
+                                <RepeatButton Name="PART_DecreaseButton"
+                                              Theme="{StaticResource WlrixSliderTrackButton}" />
+                            </Track.DecreaseButton>
+                            <Track.IncreaseButton>
+                                <RepeatButton Name="PART_IncreaseButton"
+                                              Theme="{StaticResource WlrixSliderTrackButton}" />
+                            </Track.IncreaseButton>
+                            <Thumb Theme="{StaticResource WlrixSliderThumbHorizontal}" />
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="^:vertical">
+            <Setter Property="MinWidth" Value="21" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid ColumnDefinitions="*,Auto,*">
+                        <wlrix:BevelBorder Grid.Column="1"
+                                         Bevel="Sunken" BevelThickness="1" OuterLineThickness="1"
+                                         Width="19"
+                                         HorizontalAlignment="Center"
+                                         Background="{DynamicResource WlrixTrough}"
+                                         LightBrush="{DynamicResource WlrixTopShadow}"
+                                         DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                         OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+
+                        <Track Name="PART_Track"
+                               Grid.Column="1"
+                               Minimum="{TemplateBinding Minimum}"
+                               Maximum="{TemplateBinding Maximum}"
+                               Value="{TemplateBinding Value, Mode=TwoWay}"
+                               Orientation="Vertical"
+                               IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+                            <Track.DecreaseButton>
+                                <RepeatButton Name="PART_DecreaseButton"
+                                              Theme="{StaticResource WlrixSliderTrackButton}" />
+                            </Track.DecreaseButton>
+                            <Track.IncreaseButton>
+                                <RepeatButton Name="PART_IncreaseButton"
+                                              Theme="{StaticResource WlrixSliderTrackButton}" />
+                            </Track.IncreaseButton>
+                            <Thumb Theme="{StaticResource WlrixSliderThumbVertical}" />
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,86 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+    <!-- IRIX tab: a rounded-trapezoid handle drawn by TabShape. Unselected tabs use the
+         recessed WlrixSelect face; the selected tab uses the page color (WlrixFace) and is raised
+         on top (ZIndex) so it merges into the page body. Tabs overlap via a negative margin. -->
+    <ControlTheme x:Key="{x:Type TabItem}" TargetType="TabItem">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="16,4" />
+        <Setter Property="Margin" Value="0,0,-8,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <wlrix:TabShape Name="Shape"
+                                  IsSelected="{TemplateBinding IsSelected}"
+                                  Background="{DynamicResource WlrixSelect}"
+                                  SelectedBackground="{DynamicResource WlrixFace}"
+                                  LightBrush="{DynamicResource WlrixTopShadow}"
+                                  DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                  OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                  SlantWidth="10" CornerRadius="4" />
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Content="{TemplateBinding Header}"
+                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                      Margin="{TemplateBinding Padding}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+
+        <!-- Selected tab is raised to win the overlap and cover the page seam. The shape paints
+             its SelectedBackground from the bound IsSelected, so no :selected style is needed. -->
+        <Style Selector="^:selected">
+            <Setter Property="ZIndex" Value="10" />
+        </Style>
+        <!-- Bottom strip: flip the trapezoid so its wide base meets the page above. -->
+        <Style Selector="^[TabStripPlacement=Bottom] /template/ wlrix|TabShape#Shape">
+            <Setter Property="FlipVertical" Value="True" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type TabControl}" TargetType="TabControl">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DockPanel>
+                    <ItemsPresenter Name="PART_ItemsPresenter"
+                                    DockPanel.Dock="Top"
+                                    ClipToBounds="False"
+                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                    ZIndex="1" />
+                    <!-- Page body: a raised panel the selected tab merges into. -->
+                    <wlrix:BevelBorder Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                     Background="{DynamicResource WlrixFace}"
+                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                     DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                     OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                     Padding="8">
+                        <ContentPresenter Name="PART_SelectedContentHost"
+                                          Content="{TemplateBinding SelectedContent}"
+                                          ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
+                    </wlrix:BevelBorder>
+                </DockPanel>
+            </ControlTemplate>
+        </Setter>
+
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </Setter>
+
+        <Style Selector="^[TabStripPlacement=Top] /template/ ItemsPresenter#PART_ItemsPresenter">
+            <Setter Property="DockPanel.Dock" Value="Top" />
+        </Style>
+        <Style Selector="^[TabStripPlacement=Bottom] /template/ ItemsPresenter#PART_ItemsPresenter">
+            <Setter Property="DockPanel.Dock" Value="Bottom" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

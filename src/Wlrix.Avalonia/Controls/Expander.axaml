@@ -1,0 +1,77 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+    <!-- Header toggle: a raised bar with a triangle that points right (collapsed) or down
+         (expanded), plus the header content. -->
+    <ControlTheme x:Key="WlrixExpanderToggle" TargetType="ToggleButton">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="8,3" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Name="Bevel"
+                                 Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                 Padding="{TemplateBinding Padding}">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Path Name="Arrow"
+                              Grid.Column="0"
+                              Data="M 0,0 L 8,4 L 0,8 Z"
+                              Fill="{DynamicResource WlrixForeground}"
+                              Margin="0,0,8,0"
+                              VerticalAlignment="Center"
+                              RenderTransformOrigin="50%,50%" />
+                        <ContentPresenter Grid.Column="1"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          VerticalAlignment="Center" />
+                    </Grid>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pressed /template/ wlrix|BevelBorder#Bevel">
+            <Setter Property="Bevel" Value="Sunken" />
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+        <!-- Expanded: rotate the arrow to point down -->
+        <Style Selector="^:checked /template/ Path#Arrow">
+            <Setter Property="RenderTransform" Value="rotate(90deg)" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type Expander}" TargetType="Expander">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="Auto,*">
+                    <ToggleButton Name="PART_toggle"
+                                  Grid.Row="0"
+                                  Theme="{StaticResource WlrixExpanderToggle}"
+                                  Content="{TemplateBinding Header}"
+                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                  IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}" />
+
+                    <wlrix:BevelBorder Name="PART_ContentHost"
+                                     Grid.Row="1"
+                                     Bevel="Sunken" BevelThickness="1" OuterLineThickness="1"
+                                     Background="{DynamicResource WlrixFace}"
+                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                     DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                     OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                     Padding="8"
+                                     IsVisible="{TemplateBinding IsExpanded}">
+                        <ContentPresenter Name="PART_ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
+                    </wlrix:BevelBorder>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

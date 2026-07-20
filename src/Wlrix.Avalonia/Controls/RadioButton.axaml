@@ -1,0 +1,59 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <ControlTheme x:Key="{x:Type RadioButton}" TargetType="RadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="6,0,0,0" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid ColumnDefinitions="Auto,*">
+                    <!-- Diamond indicator: a beveled square rotated 45 degrees (the Motif "one-of-many" look) -->
+                    <Panel Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center">
+                        <wlrix:BevelBorder Name="Box"
+                                         Width="13"
+                                         Height="13"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"
+                                         RenderTransform="rotate(45deg)"
+                                         Bevel="Raised"
+                                         BevelThickness="2"
+                                         OuterLineThickness="1"
+                                         Background="{DynamicResource WlrixFace}"
+                                         LightBrush="{DynamicResource WlrixTopShadow}"
+                                         DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                         OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                            <Border Name="Mark"
+                                    Background="{DynamicResource WlrixRadio}"
+                                    Margin="1"
+                                    IsVisible="False" />
+                        </wlrix:BevelBorder>
+                    </Panel>
+
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Grid.Column="1"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Margin="{TemplateBinding Padding}"
+                                      RecognizesAccessKey="True"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:checked /template/ wlrix|BevelBorder#Box">
+            <Setter Property="Bevel" Value="Sunken" />
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+        <Style Selector="^:checked /template/ Border#Mark">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

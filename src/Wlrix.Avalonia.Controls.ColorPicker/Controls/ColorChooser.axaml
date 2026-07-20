@@ -1,0 +1,181 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia"
+                    xmlns:cp="using:Wlrix.Avalonia.Controls.ColorPicker.Controls">
+
+    <ControlTheme x:Key="{x:Type cp:ColorChooser}" TargetType="cp:ColorChooser">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                 Padding="2">
+                    <DockPanel>
+                        <!-- Menu bar: Options + Sliders -->
+                        <Menu DockPanel.Dock="Top" Margin="0,0,0,6">
+                            <MenuItem Header="Options">
+                                <MenuItem Name="PART_OptionsWhite" Header="White" />
+                            </MenuItem>
+                            <MenuItem Header="Sliders">
+                                <MenuItem Name="PART_SlidersHsv" Header="HSV" />
+                                <MenuItem Name="PART_SlidersRgb" Header="RGB" />
+                                <MenuItem Name="PART_SlidersBoth" Header="RGB + HSV" />
+                            </MenuItem>
+                        </Menu>
+
+                        <Grid ColumnDefinitions="Auto,12,*" Margin="6">
+                            <!-- ===== Left column: swatches + component rows ===== -->
+                            <StackPanel Grid.Column="0" Spacing="6" Width="240">
+                                <!-- Swatches -->
+                                <Grid ColumnDefinitions="Auto,Auto,*" RowDefinitions="Auto,Auto"
+                                      ColumnSpacing="8">
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Current Color:"
+                                               VerticalAlignment="Center" />
+                                    <wlrix:BevelBorder Grid.Row="0" Grid.Column="2"
+                                                     Bevel="Sunken" BevelThickness="2" OuterLineThickness="1"
+                                                     Height="26"
+                                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                                     DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                     OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                                     Background="{Binding ColorBrush, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                                    <!-- Copy arrows between the two swatches -->
+                                    <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                                                Orientation="Vertical" Spacing="2"
+                                                VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <Button Name="PART_StoreButton" Width="20" Height="16" Padding="0"
+                                                ToolTip.Tip="Store current color">
+                                            <Path Data="M 0,5 L 5,0 L 10,5 Z" Fill="{DynamicResource WlrixForeground}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                        <Button Name="PART_RecallButton" Width="20" Height="16" Padding="0"
+                                                ToolTip.Tip="Recall stored color">
+                                            <Path Data="M 0,0 L 10,0 L 5,5 Z" Fill="{DynamicResource WlrixForeground}"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Stored Color:"
+                                               VerticalAlignment="Center" Margin="0,4,0,0" />
+                                    <wlrix:BevelBorder Grid.Row="1" Grid.Column="2"
+                                                     Bevel="Sunken" BevelThickness="2" OuterLineThickness="1"
+                                                     Height="26" Margin="0,4,0,0"
+                                                     LightBrush="{DynamicResource WlrixTopShadow}"
+                                                     DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                     OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                                     Background="{Binding StoredColorBrush, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </Grid>
+
+                                <!-- Component rows: label, numeric field, gradient slider -->
+                                <!-- Hue -->
+                                <Grid ColumnDefinitions="70,56,*" ColumnSpacing="6"
+                                      IsVisible="{Binding VisibleSliders, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cp:SliderSetConverter.Instance}, ConverterParameter=Hsv}">
+                                    <TextBlock Grid.Column="0" Text="Hue" VerticalAlignment="Center" />
+                                    <NumericUpDown Grid.Column="1" Minimum="0" Maximum="1" Increment="0.001"
+                                                   FormatString="0.000"
+                                                   Value="{Binding HueValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                                    <cp:ColorComponentSlider Grid.Column="2" Component="Hue" Minimum="0" Maximum="1"
+                                                             Value="{Binding HueValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                             BaseColor="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}"
+                                                             FaceBrush="{DynamicResource WlrixFace}"
+                                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                                             DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                             OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+                                </Grid>
+                                <!-- Saturation -->
+                                <Grid ColumnDefinitions="70,56,*" ColumnSpacing="6"
+                                      IsVisible="{Binding VisibleSliders, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cp:SliderSetConverter.Instance}, ConverterParameter=Hsv}">
+                                    <TextBlock Grid.Column="0" Text="Saturation" VerticalAlignment="Center" />
+                                    <NumericUpDown Grid.Column="1" Minimum="0" Maximum="1" Increment="0.001"
+                                                   FormatString="0.000"
+                                                   Value="{Binding SaturationValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                                    <cp:ColorComponentSlider Grid.Column="2" Component="Saturation" Minimum="0" Maximum="1"
+                                                             Value="{Binding SaturationValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                             BaseColor="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}"
+                                                             FaceBrush="{DynamicResource WlrixFace}"
+                                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                                             DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                             OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+                                </Grid>
+                                <!-- Value -->
+                                <Grid ColumnDefinitions="70,56,*" ColumnSpacing="6"
+                                      IsVisible="{Binding VisibleSliders, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cp:SliderSetConverter.Instance}, ConverterParameter=Hsv}">
+                                    <TextBlock Grid.Column="0" Text="Value" VerticalAlignment="Center" />
+                                    <NumericUpDown Grid.Column="1" Minimum="0" Maximum="1" Increment="0.001"
+                                                   FormatString="0.000"
+                                                   Value="{Binding ValueValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                                    <cp:ColorComponentSlider Grid.Column="2" Component="Value" Minimum="0" Maximum="1"
+                                                             Value="{Binding ValueValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                             BaseColor="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}"
+                                                             FaceBrush="{DynamicResource WlrixFace}"
+                                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                                             DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                             OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+                                </Grid>
+                                <!-- Red -->
+                                <Grid ColumnDefinitions="70,56,*" ColumnSpacing="6"
+                                      IsVisible="{Binding VisibleSliders, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cp:SliderSetConverter.Instance}, ConverterParameter=Rgb}">
+                                    <TextBlock Grid.Column="0" Text="Red" VerticalAlignment="Center" />
+                                    <NumericUpDown Grid.Column="1" Minimum="0" Maximum="255" Increment="1"
+                                                   FormatString="0"
+                                                   Value="{Binding RedValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                                    <cp:ColorComponentSlider Grid.Column="2" Component="Red" Minimum="0" Maximum="255"
+                                                             Value="{Binding RedValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                             BaseColor="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}"
+                                                             FaceBrush="{DynamicResource WlrixFace}"
+                                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                                             DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                             OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+                                </Grid>
+                                <!-- Green -->
+                                <Grid ColumnDefinitions="70,56,*" ColumnSpacing="6"
+                                      IsVisible="{Binding VisibleSliders, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cp:SliderSetConverter.Instance}, ConverterParameter=Rgb}">
+                                    <TextBlock Grid.Column="0" Text="Green" VerticalAlignment="Center" />
+                                    <NumericUpDown Grid.Column="1" Minimum="0" Maximum="255" Increment="1"
+                                                   FormatString="0"
+                                                   Value="{Binding GreenValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                                    <cp:ColorComponentSlider Grid.Column="2" Component="Green" Minimum="0" Maximum="255"
+                                                             Value="{Binding GreenValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                             BaseColor="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}"
+                                                             FaceBrush="{DynamicResource WlrixFace}"
+                                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                                             DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                             OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+                                </Grid>
+                                <!-- Blue -->
+                                <Grid ColumnDefinitions="70,56,*" ColumnSpacing="6"
+                                      IsVisible="{Binding VisibleSliders, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static cp:SliderSetConverter.Instance}, ConverterParameter=Rgb}">
+                                    <TextBlock Grid.Column="0" Text="Blue" VerticalAlignment="Center" />
+                                    <NumericUpDown Grid.Column="1" Minimum="0" Maximum="255" Increment="1"
+                                                   FormatString="0"
+                                                   Value="{Binding BlueValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                                    <cp:ColorComponentSlider Grid.Column="2" Component="Blue" Minimum="0" Maximum="255"
+                                                             Value="{Binding BlueValue, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                             BaseColor="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}"
+                                                             FaceBrush="{DynamicResource WlrixFace}"
+                                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                                             DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                             OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- ===== Right: the hue/saturation hexagon ===== -->
+                            <wlrix:BevelBorder Grid.Column="2"
+                                             Bevel="Sunken" BevelThickness="2" OuterLineThickness="1"
+                                             MinWidth="180" MinHeight="160"
+                                             Background="{DynamicResource WlrixViewBackground}"
+                                             LightBrush="{DynamicResource WlrixTopShadow}"
+                                             DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                             OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                             Padding="4">
+                                <cp:ColorHexagon Name="PART_Hexagon" />
+                            </wlrix:BevelBorder>
+                        </Grid>
+                    </DockPanel>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

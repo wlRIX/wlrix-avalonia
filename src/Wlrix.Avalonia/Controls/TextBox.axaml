@@ -1,0 +1,124 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <ControlTheme x:Key="{x:Type TextBox}" TargetType="TextBox">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixTextForeground}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource WlrixTextForeground}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource WlrixSelection}" />
+        <Setter Property="SelectionForegroundBrush" Value="{DynamicResource WlrixSelectionForeground}" />
+        <Setter Property="Padding" Value="4,2" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Name="Bevel"
+                                 Bevel="Sunken"
+                                 BevelThickness="2"
+                                 OuterLineThickness="1"
+                                 Background="{DynamicResource WlrixTextBackground}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                 Padding="{TemplateBinding Padding}">
+                    <DockPanel>
+                        <ContentPresenter Content="{TemplateBinding InnerLeftContent}"
+                                          DockPanel.Dock="Left" />
+                        <ContentPresenter Content="{TemplateBinding InnerRightContent}"
+                                          DockPanel.Dock="Right" />
+                        <ScrollViewer Name="PART_ScrollViewer"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Auto">
+                            <Panel>
+                                <TextBlock Name="PART_Watermark"
+                                           Text="{TemplateBinding PlaceholderText}"
+                                           Foreground="{DynamicResource WlrixDisabledForeground}"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                           IsVisible="False" />
+                                <TextPresenter Name="PART_TextPresenter"
+                                               Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                               CaretIndex="{TemplateBinding CaretIndex}"
+                                               SelectionStart="{TemplateBinding SelectionStart}"
+                                               SelectionEnd="{TemplateBinding SelectionEnd}"
+                                               TextAlignment="{TemplateBinding TextAlignment}"
+                                               TextWrapping="{TemplateBinding TextWrapping}"
+                                               PasswordChar="{TemplateBinding PasswordChar}"
+                                               RevealPassword="{TemplateBinding RevealPassword}"
+                                               SelectionBrush="{TemplateBinding SelectionBrush}"
+                                               SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+                                               CaretBrush="{TemplateBinding CaretBrush}"
+                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Panel>
+                        </ScrollViewer>
+                    </DockPanel>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+
+        <!-- Show the watermark only when the field is empty and unfocused -->
+        <Style Selector="^:empty:not(:focus) /template/ TextBlock#PART_Watermark">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- A borderless text field for embedding inside another sunken frame (e.g., the
+         NumericUpDown / ButtonSpinner, which supplies its own bevel). -->
+    <ControlTheme x:Key="WlrixPlainTextBox" TargetType="TextBox">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixTextForeground}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource WlrixTextForeground}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource WlrixSelection}" />
+        <Setter Property="SelectionForegroundBrush" Value="{DynamicResource WlrixSelectionForeground}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DockPanel>
+                    <ContentPresenter Content="{TemplateBinding InnerLeftContent}"
+                                      DockPanel.Dock="Left" />
+                    <ContentPresenter Content="{TemplateBinding InnerRightContent}"
+                                      DockPanel.Dock="Right" />
+                    <ScrollViewer Name="PART_ScrollViewer"
+                                  HorizontalScrollBarVisibility="Hidden"
+                                  VerticalScrollBarVisibility="Auto">
+                        <Panel>
+                            <TextBlock Name="PART_Watermark"
+                                       Text="{TemplateBinding PlaceholderText}"
+                                       Foreground="{DynamicResource WlrixDisabledForeground}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       IsVisible="False" />
+                            <TextPresenter Name="PART_TextPresenter"
+                                           Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                           CaretIndex="{TemplateBinding CaretIndex}"
+                                           SelectionStart="{TemplateBinding SelectionStart}"
+                                           SelectionEnd="{TemplateBinding SelectionEnd}"
+                                           TextAlignment="{TemplateBinding TextAlignment}"
+                                           TextWrapping="{TemplateBinding TextWrapping}"
+                                           PasswordChar="{TemplateBinding PasswordChar}"
+                                           RevealPassword="{TemplateBinding RevealPassword}"
+                                           SelectionBrush="{TemplateBinding SelectionBrush}"
+                                           SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+                                           CaretBrush="{TemplateBinding CaretBrush}"
+                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Panel>
+                    </ScrollViewer>
+                </DockPanel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:empty:not(:focus) /template/ TextBlock#PART_Watermark">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

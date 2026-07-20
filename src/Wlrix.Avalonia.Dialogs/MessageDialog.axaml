@@ -1,0 +1,63 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia"
+        xmlns:local="using:Wlrix.Avalonia.Dialogs"
+        x:Class="Wlrix.Avalonia.Dialogs.MessageDialog"
+        x:DataType="local:MessageDialog"
+        CanResize="False"
+        SizeToContent="Height"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource WlrixFace}"
+        Foreground="{DynamicResource WlrixForeground}"
+        FontFamily="{DynamicResource WlrixFontFamily}"
+        FontSize="12">
+
+    <wlrix:BevelBorder Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                     Background="{DynamicResource WlrixFace}"
+                     LightBrush="{DynamicResource WlrixTopShadow}"
+                     DarkBrush="{DynamicResource WlrixBottomShadow}"
+                     OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                     Padding="12">
+        <DockPanel>
+            <!-- Button row -->
+            <StackPanel DockPanel.Dock="Bottom"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="12"
+                        Margin="0,14,0,0">
+                <Button Name="PART_OkButton" Content="{Binding OkText, RelativeSource={RelativeSource AncestorType=local:MessageDialog}}"
+                        IsDefault="True" MinWidth="64"
+                        IsVisible="{Binding IsOkVisible, RelativeSource={RelativeSource AncestorType=local:MessageDialog}}" />
+                <Button Name="PART_CancelButton" Content="{Binding CancelText, RelativeSource={RelativeSource AncestorType=local:MessageDialog}}"
+                        IsCancel="True" MinWidth="64"
+                        IsVisible="{Binding IsCancelVisible, RelativeSource={RelativeSource AncestorType=local:MessageDialog}}" />
+                <Button Name="PART_HelpButton" Content="{Binding HelpText, RelativeSource={RelativeSource AncestorType=local:MessageDialog}}"
+                        MinWidth="64"
+                        IsVisible="{Binding IsHelpVisible, RelativeSource={RelativeSource AncestorType=local:MessageDialog}}" />
+            </StackPanel>
+
+            <!-- Icon + framed message. The icon slot reserves a fixed 32px so the message
+                 position is stable whether or not the icon asset is present. -->
+            <Grid ColumnDefinitions="32,12,*" VerticalAlignment="Top">
+                <Image Grid.Column="0"
+                       Width="32" Height="32"
+                       VerticalAlignment="Top"
+                       Source="{Binding IconImage, RelativeSource={RelativeSource AncestorType=local:MessageDialog}}" />
+
+                <!-- Light, non-beveled border around the message -->
+                <Border Grid.Column="2"
+                        BorderBrush="{DynamicResource WlrixForeground}"
+                        BorderThickness="1"
+                        Background="{DynamicResource WlrixFace}"
+                        Padding="8"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Message, RelativeSource={RelativeSource AncestorType=local:MessageDialog}}"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource WlrixForeground}" />
+                </Border>
+            </Grid>
+        </DockPanel>
+    </wlrix:BevelBorder>
+</Window>
