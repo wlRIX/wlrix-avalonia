@@ -6,8 +6,8 @@
         IRIX "Toolchest" top-level menu item: a vertical menu button whose submenu flies out to
         the right, with a small raised "drawer handle" glyph on the right edge. Visual only — a
         consumer binds Header / ItemsSource / Command via a theme BasedOn this one, and stacks the
-        items with a vertical Menu ItemsPanel. All colours come from the active scheme, so it
-        tracks global colour-scheme changes like the rest of the theme.
+        items with a vertical Menu ItemsPanel. All colors come from the active scheme, so it
+        tracks global color-scheme changes like the rest of the theme.
     -->
     <ControlTheme x:Key="WlrixToolchestMenuItem" TargetType="MenuItem">
         <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />

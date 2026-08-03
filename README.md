@@ -8,14 +8,8 @@ the classic **Indigo Magic** blue-gray.
 It is self-contained: `WlrixTheme` is a complete theme and does **not** depend on
 `FluentTheme` (or any other base theme). Add it alone to `Application.Styles`.
 
-![SGI theme gallery — Indigo Magic](artifacts/IndigoMagic.png)
-
 IRIX baked the same scheme for three display gammas. All three ship; **gamma 1.7**
 is the default, as it reads closest to the original on an sRGB display.
-
-| Gamma 1.0                                  | Gamma 2.4                                  |
-|--------------------------------------------|--------------------------------------------|
-| ![Gamma 1.0](artifacts/IndigoMagicG10.png) | ![Gamma 2.4](artifacts/IndigoMagicG24.png) |
 
 ## Projects
 
@@ -68,7 +62,7 @@ component — it updates `Path`, raises `PathSelected`, and (optionally) invokes
 `Command` with the selected path.
 
 ```xml
-<sgi:PathBar Path="/usr/people/debbie"
+<sgi:PathBar Path="/usr/people/vic485"
              PathSelected="OnPathSelected" />
 ```
 

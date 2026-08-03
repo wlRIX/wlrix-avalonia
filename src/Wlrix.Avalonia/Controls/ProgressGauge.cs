@@ -232,7 +232,7 @@ public sealed class ProgressGauge : Control
             context.DrawGeometry(fill, null, geo);
         }
 
-        // Value label above the trough, centred on the fill tip.
+        // Value label above the trough, centered on the fill tip.
         if (ShowValueText && labelH > 0)
         {
             var text = FormatLabel();
