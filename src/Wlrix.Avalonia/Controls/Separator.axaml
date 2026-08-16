@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+    <!-- An etched dividing line, as IRIX ruled a menu into groups.
+
+         Menus can spell a separator two ways: a `Separator` element (this theme) or a
+         `MenuItem` headed "-" (Avalonia's `:separator` pseudo-class, templated alongside the
+         other menu items in Menu.axaml). Both must land on the same etched rule, so keep the
+         two in step. -->
+    <ControlTheme x:Key="{x:Type Separator}" TargetType="Separator">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Height" Value="2" />
+        <Setter Property="Margin" Value="4,3" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Etched"
+                                 BevelThickness="2"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

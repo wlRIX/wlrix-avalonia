@@ -155,7 +155,8 @@
             </ControlTemplate>
         </Setter>
 
-        <!-- Separator item -->
+        <!-- Separator item: a MenuItem headed "-". The `Separator` element spelling is
+             themed in Separator.axaml; keep the two looking the same. -->
         <Style Selector="^:separator">
             <Setter Property="Template">
                 <ControlTemplate>

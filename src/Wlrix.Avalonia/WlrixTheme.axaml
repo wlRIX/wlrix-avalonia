@@ -34,6 +34,7 @@
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/PathBar.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Thumbwheel.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToolTip.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Separator.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Menu.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToolchestMenu.axaml" />
             </ResourceDictionary.MergedDictionaries>
