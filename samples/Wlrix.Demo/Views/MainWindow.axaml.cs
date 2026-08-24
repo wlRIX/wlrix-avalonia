@@ -7,7 +7,8 @@ namespace Wlrix.Demo.Views;
 
 public partial class MainWindow : Window
 {
-    private static readonly string[] SchemeFiles = { "Classic", "ClassicG10", "ClassicG24" };
+    private static readonly string[] SchemeFiles =
+        { "Classic", "ClassicG10", "ClassicG24", "Gotham" };
 
     public MainWindow()
     {
@@ -39,6 +40,10 @@ public partial class MainWindow : Window
         var uri = new Uri($"avares://Wlrix.Avalonia/Schemes/{SchemeFiles[index]}.axaml");
         var scheme = new ResourceInclude((Uri?)null) { Source = uri };
 
+        // `Clear()` is safe *here* and only here: the demo merges nothing of its own. A real
+        // application does -- Wlrix.Toolchest merges its own menu dictionary into
+        // Application.Resources -- so a switching API for apps has to replace one owned entry
+        // rather than emptying the list. That API does not exist yet.
         app.Resources.MergedDictionaries.Clear();
         app.Resources.MergedDictionaries.Add(scheme);
     }

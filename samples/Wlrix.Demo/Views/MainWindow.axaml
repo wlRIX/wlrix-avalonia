@@ -48,6 +48,7 @@
                     <ComboBoxItem>Classic (gamma 1.7)</ComboBoxItem>
                     <ComboBoxItem>Classic (gamma 1.0)</ComboBoxItem>
                     <ComboBoxItem>Classic (gamma 2.4)</ComboBoxItem>
+                    <ComboBoxItem>Gotham</ComboBoxItem>
                 </ComboBox>
             </StackPanel>
         </wlrix:BevelBorder>
