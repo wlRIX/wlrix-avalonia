@@ -203,6 +203,34 @@ The dialogs are plain `Window`s that inherit the app-level `WlrixTheme`, so no e
 styles are required. Icons live under `Assets/Icons/{Type}.png`; until they are
 added the icon slot stays empty (its space is reserved so layout doesn't shift).
 
+## File dialogs
+
+`WlrixTheme` templates Avalonia's `ManagedFileChooser`, so `TopLevel.StorageProvider`
+opens a dialog in the wlRIX look with nothing extra to reference — the control lives in
+`Avalonia.Dialogs.dll`, which ships inside the `Avalonia` package.
+
+This is not a nicety. wlRIX has no FileChooser portal, and the managed chooser is
+templated only by the Fluent and Simple themes; since this theme includes no base theme,
+an untemplated chooser opens as an **empty window**, with no error and nothing in the log.
+`ManagedFileChooserOverwritePrompt` is templated for the same reason — a save over an
+existing file would otherwise raise a blank box.
+
+The nub row across the top is the `PathBar` above, so clicking a path component navigates.
+
+To open the wlRIX picker even where a working portal exists — a GTK dialog looks out of
+place in this desktop — force the managed one at startup:
+
+```csharp
+AppBuilder.Configure<App>()
+    .UsePlatformDetect()
+    .UseWayland()
+    .UseManagedSystemDialogs()   // Avalonia.Dialogs
+```
+
+The chooser's own strings (`OK`, `Cancel`, the column headings) are declared alongside the
+theme, because Fluent keeps its copies in a dictionary nothing here merges in. They are
+American English only; there is no satellite resource mechanism in a theme dictionary.
+
 ## Color schemes
 
 > **`Schemes/*.axaml` is generated — do not edit it.** The colors come from

@@ -37,6 +37,9 @@
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Separator.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Menu.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToolchestMenu.axaml" />
+                <!-- Avalonia's in-process file picker. wlRIX ships no FileChooser portal, so
+                     this is what `StorageProvider` opens; untemplated it is a blank window. -->
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ManagedFileChooser.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

@@ -1,0 +1,341 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conv="using:Wlrix.Avalonia.Converters"
+                    xmlns:dialogs="using:Avalonia.Dialogs"
+                    xmlns:internal="using:Avalonia.Dialogs.Internal"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+    <!--
+        The file selection dialog.
+
+        wlRIX has no FileChooser portal of its own, so `TopLevel.StorageProvider` ends up at
+        Avalonia's in-process `ManagedFileChooser`. That control is templated only by the Fluent
+        and Simple themes, and `WlrixTheme` includes no base theme — so without this file a file
+        dialog opens as an empty window, with no error and nothing in the log. Themed here in the
+        shared theme rather than in one app, because the first app to open a file dialog will not
+        be the last.
+
+        `Avalonia.Dialogs.dll` ships inside the `Avalonia` package, so this costs no new
+        dependency.
+
+        The strings are declared here too. Fluent keeps them in its own
+        `Strings/InvariantResources.xaml`, which nothing merges in here, so every
+        `StringManagedFileChooser*` lookup would otherwise resolve to nothing and the buttons
+        would come up blank. American English, matching the rest of wlRIX.
+    -->
+    <conv:EnumMatchConverter x:Key="WlrixItemTypeConverter" />
+
+    <x:String x:Key="StringManagedFileChooserFileNamePlaceholder">File name</x:String>
+    <x:String x:Key="StringManagedFileChooserShowHiddenFilesText">Show hidden files</x:String>
+    <x:String x:Key="StringManagedFileChooserOkText">OK</x:String>
+    <x:String x:Key="StringManagedFileChooserCancelText">Cancel</x:String>
+    <x:String x:Key="StringManagedFileChooserNameColumn">Name</x:String>
+    <x:String x:Key="StringManagedFileChooserDateModifiedColumn">Date Modified</x:String>
+    <x:String x:Key="StringManagedFileChooserTypeColumn">Type</x:String>
+    <x:String x:Key="StringManagedFileChooserSizeColumn">Size</x:String>
+    <x:String x:Key="StringManagedFileChooserOverwritePromptConfirmText">Yes</x:String>
+    <x:String x:Key="StringManagedFileChooserOverwritePromptCancelText">No</x:String>
+    <x:String x:Key="StringManagedFileChooserOverwritePromptFileAlreadyExistsText">{0} already exists. Do you want to replace it?</x:String>
+
+    <!--
+        Item glyphs, drawn in code rather than shipped as artwork — the same approach
+        `wlrix-desktop` takes for its desktop icons, and for the same reason: there is no icon
+        set in the tree yet. Three shapes overlaid, one visible at a time; the enum has no
+        equality operator available to a compiled binding, hence the converter.
+    -->
+    <DataTemplate x:Key="WlrixFileChooserGlyph" DataType="internal:ManagedFileChooserItemViewModel">
+        <Panel Width="16" Height="16" VerticalAlignment="Center">
+            <!-- Folder: a tab along the top left, then the body below it. -->
+            <Path Data="M1,4 L1,3 L6,3 L7,4.5 L15,4.5 L15,13 L1,13 Z"
+                  Fill="{DynamicResource WlrixFace}"
+                  Stroke="{DynamicResource WlrixOuterLine}"
+                  StrokeThickness="1"
+                  IsVisible="{Binding ItemType, Converter={StaticResource WlrixItemTypeConverter}, ConverterParameter=Folder}" />
+            <!-- File: a sheet of paper with the corner turned down. -->
+            <Path Data="M3,1 L10,1 L13,4 L13,15 L3,15 Z M10,1 L10,4 L13,4"
+                  Fill="{DynamicResource WlrixTopShadow}"
+                  Stroke="{DynamicResource WlrixOuterLine}"
+                  StrokeThickness="1"
+                  IsVisible="{Binding ItemType, Converter={StaticResource WlrixItemTypeConverter}, ConverterParameter=File}" />
+            <!-- Volume: a drive, slot and all. -->
+            <Path Data="M1,5 L15,5 L15,12 L1,12 Z M3,7 L9,7 L9,10 L3,10 Z"
+                  Fill="{DynamicResource WlrixFace}"
+                  Stroke="{DynamicResource WlrixOuterLine}"
+                  StrokeThickness="1"
+                  IsVisible="{Binding ItemType, Converter={StaticResource WlrixItemTypeConverter}, ConverterParameter=Volume}" />
+        </Panel>
+    </DataTemplate>
+
+    <!--
+        The quick-links rail down the left. A raised panel, not a sunken well: it is chrome
+        beside the list rather than a second list of its own, which is how IRIX separated the
+        two.
+    -->
+    <ControlTheme x:Key="WlrixFileChooserQuickLinks" TargetType="ListBox">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="Width" Value="170" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                   Background="{DynamicResource WlrixFace}"
+                                   LightBrush="{DynamicResource WlrixTopShadow}"
+                                   DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                   OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsPresenter Name="PART_ItemsPresenter"
+                                        Margin="{TemplateBinding Padding}"
+                                        ItemsPanel="{TemplateBinding ItemsPanel}" />
+                    </ScrollViewer>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!--
+        The column heading strip. A raised bar over the sunken list, with etched splitters
+        between the labels — the IRIX file manager's own arrangement, and the reason the
+        heading sits outside the list well rather than scrolling with it.
+    -->
+    <ControlTheme x:Key="WlrixFileChooserColumnSplitter" TargetType="GridSplitter">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="Transparent" VerticalAlignment="Stretch">
+                    <wlrix:BevelBorder Bevel="Etched" BevelThickness="2" Width="2"
+                                       Margin="0,2"
+                                       VerticalAlignment="Stretch"
+                                       LightBrush="{DynamicResource WlrixTopShadow}"
+                                       DarkBrush="{DynamicResource WlrixBottomShadow}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type dialogs:ManagedFileChooser}" TargetType="dialogs:ManagedFileChooser">
+        <Setter Property="Background" Value="{DynamicResource WlrixPanel}" />
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <!-- The host window sets no size of its own, so the chooser is what gives the dialog
+             one. Wide enough for the four columns without the name being squeezed. -->
+        <Setter Property="MinWidth" Value="720" />
+        <Setter Property="MinHeight" Value="460" />
+        <Setter Property="Template" x:DataType="internal:ManagedFileChooserViewModel">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}" Padding="6">
+                    <DockPanel LastChildFill="True">
+
+                        <!-- Location bar. `PathBar` is the theme's own SGI-style path field:
+                             a row of nub tabs over an editable path, which is exactly what
+                             this row wants and what the IRIX file manager had. -->
+                        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                            <Button DockPanel.Dock="Left" Command="{Binding GoUp}"
+                                    Width="28" Margin="0,0,4,0" Padding="0"
+                                    ToolTip.Tip="Up one level">
+                                <Path Data="M 1 7 L 7 1 L 13 7 M 7 1 L 7 15"
+                                      Stroke="{DynamicResource WlrixForeground}"
+                                      StrokeThickness="1"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Button>
+                            <Button DockPanel.Dock="Right" Command="{Binding Refresh}"
+                                    Width="28" Margin="4,0,0,0" Padding="0"
+                                    ToolTip.Tip="Refresh">
+                                <Path Data="M 3 8 A 5 5 0 1 1 8 13 M 3 4 L 3 8 L 7 8"
+                                      Stroke="{DynamicResource WlrixForeground}"
+                                      StrokeThickness="1"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Button>
+                            <wlrix:PathBar Name="PART_Location"
+                                           Path="{Binding Location, Mode=TwoWay}"
+                                           Command="{Binding Refresh}" />
+                        </DockPanel>
+
+                        <!-- Filename, filter, hidden-files toggle and the two buttons. -->
+                        <DockPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
+                            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                                <ComboBox DockPanel.Dock="Right"
+                                          MinWidth="150" Margin="6,0,0,0"
+                                          IsVisible="{Binding ShowFilters}"
+                                          ItemsSource="{Binding Filters}"
+                                          SelectedItem="{Binding SelectedFilter}" />
+                                <TextBox Text="{Binding FileName}"
+                                         PlaceholderText="{DynamicResource StringManagedFileChooserFileNamePlaceholder}"
+                                         IsVisible="{Binding !SelectingFolder}" />
+                            </DockPanel>
+                            <CheckBox DockPanel.Dock="Left"
+                                      IsChecked="{Binding ShowHiddenFiles}"
+                                      Content="{DynamicResource StringManagedFileChooserShowHiddenFilesText}"
+                                      VerticalAlignment="Center" />
+                            <StackPanel Name="PART_Finalize" Orientation="Horizontal"
+                                        HorizontalAlignment="Right" Spacing="6">
+                                <Button Command="{Binding Ok}" MinWidth="90"
+                                        HorizontalContentAlignment="Center"
+                                        IsDefault="True"
+                                        Content="{DynamicResource StringManagedFileChooserOkText}" />
+                                <Button Command="{Binding Cancel}" MinWidth="90"
+                                        HorizontalContentAlignment="Center"
+                                        IsCancel="True"
+                                        Content="{DynamicResource StringManagedFileChooserCancelText}" />
+                            </StackPanel>
+                        </DockPanel>
+
+                        <!-- Quick links rail. The name is load-bearing: `ManagedFileChooser`
+                             declares PART_QuickLinks as a required template part and finds a
+                             single-click navigation target through it. -->
+                        <ListBox Name="PART_QuickLinks" DockPanel.Dock="Left"
+                                 Margin="0,0,6,0"
+                                 Theme="{StaticResource WlrixFileChooserQuickLinks}"
+                                 ItemsSource="{Binding QuickLinks}"
+                                 SelectedIndex="{Binding QuickLinksSelectedIndex}"
+                                 Focusable="False">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="internal:ManagedFileChooserItemViewModel">
+                                    <StackPanel Orientation="Horizontal" Spacing="4"
+                                                Background="Transparent">
+                                        <ContentControl Content="{Binding}"
+                                                        ContentTemplate="{StaticResource WlrixFileChooserGlyph}" />
+                                        <TextBlock Text="{Binding DisplayName}"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <!-- The listing. `Grid.IsSharedSizeScope` is what keeps the heading
+                             and the rows on the same column widths: both grids name the same
+                             SharedSizeGroups, so a splitter drag in the heading moves every
+                             row with it and no width is written down twice. -->
+                        <DockPanel Grid.IsSharedSizeScope="True">
+                            <wlrix:BevelBorder DockPanel.Dock="Top"
+                                               Bevel="Raised" BevelThickness="2"
+                                               OuterLineThickness="1"
+                                               Background="{DynamicResource WlrixFace}"
+                                               LightBrush="{DynamicResource WlrixTopShadow}"
+                                               DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                               OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                               Padding="2,1">
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22" SharedSizeGroup="Icon" />
+                                        <ColumnDefinition Width="*" SharedSizeGroup="Name" />
+                                        <ColumnDefinition Width="8" SharedSizeGroup="Splitter" />
+                                        <ColumnDefinition Width="150" SharedSizeGroup="Modified" />
+                                        <ColumnDefinition Width="8" SharedSizeGroup="Splitter" />
+                                        <ColumnDefinition Width="110" SharedSizeGroup="Type" />
+                                        <ColumnDefinition Width="8" SharedSizeGroup="Splitter" />
+                                        <ColumnDefinition Width="90" SharedSizeGroup="Size" />
+                                        <!-- Reserves the width the list's scrollbar takes, so
+                                             the last heading stays over the last column. -->
+                                        <ColumnDefinition Width="20" SharedSizeGroup="Gutter" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{DynamicResource StringManagedFileChooserNameColumn}" />
+                                    <GridSplitter Grid.Column="2"
+                                                  Theme="{StaticResource WlrixFileChooserColumnSplitter}" />
+                                    <TextBlock Grid.Column="3"
+                                               Text="{DynamicResource StringManagedFileChooserDateModifiedColumn}" />
+                                    <GridSplitter Grid.Column="4"
+                                                  Theme="{StaticResource WlrixFileChooserColumnSplitter}" />
+                                    <TextBlock Grid.Column="5"
+                                               Text="{DynamicResource StringManagedFileChooserTypeColumn}" />
+                                    <GridSplitter Grid.Column="6"
+                                                  Theme="{StaticResource WlrixFileChooserColumnSplitter}" />
+                                    <TextBlock Grid.Column="7" HorizontalAlignment="Right"
+                                               Text="{DynamicResource StringManagedFileChooserSizeColumn}" />
+                                </Grid>
+                            </wlrix:BevelBorder>
+
+                            <ListBox Name="PART_Files"
+                                     ItemsSource="{Binding Items}"
+                                     SelectionMode="{Binding SelectionMode}"
+                                     SelectedItems="{Binding SelectedItems}"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                <ListBox.Styles>
+                                    <!-- Rows span the full width or the columns collapse to
+                                         the text and stop lining up with the heading. -->
+                                    <Style Selector="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Padding" Value="2,1" />
+                                    </Style>
+                                </ListBox.Styles>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="internal:ManagedFileChooserItemViewModel">
+                                        <Grid Background="Transparent">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition SharedSizeGroup="Icon" />
+                                                <ColumnDefinition SharedSizeGroup="Name" />
+                                                <ColumnDefinition SharedSizeGroup="Splitter" />
+                                                <ColumnDefinition SharedSizeGroup="Modified" />
+                                                <ColumnDefinition SharedSizeGroup="Splitter" />
+                                                <ColumnDefinition SharedSizeGroup="Type" />
+                                                <ColumnDefinition SharedSizeGroup="Splitter" />
+                                                <ColumnDefinition SharedSizeGroup="Size" />
+                                            </Grid.ColumnDefinitions>
+                                            <ContentControl Grid.Column="0" Content="{Binding}"
+                                                            ContentTemplate="{StaticResource WlrixFileChooserGlyph}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding DisplayName}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Grid.Column="3" Text="{Binding Modified}" />
+                                            <TextBlock Grid.Column="5" Text="{Binding Type}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Grid.Column="7" HorizontalAlignment="Right">
+                                                <TextBlock.Text>
+                                                    <Binding Path="Size">
+                                                        <Binding.Converter>
+                                                            <internal:FileSizeStringConverter />
+                                                        </Binding.Converter>
+                                                    </Binding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <!--
+        The "that file already exists" prompt, shown over the chooser on save. It is a separate
+        control with its own template, so leaving it out would make overwriting a file open a
+        blank box instead of a question.
+    -->
+    <ControlTheme x:Key="{x:Type dialogs:ManagedFileChooserOverwritePrompt}"
+                  TargetType="dialogs:ManagedFileChooserOverwritePrompt">
+        <Setter Property="Background" Value="{DynamicResource WlrixPanel}" />
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="MinWidth" Value="300" />
+        <Setter Property="MaxWidth" Value="440" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Raised" BevelThickness="2" OuterLineThickness="1"
+                                   Background="{DynamicResource WlrixPanel}"
+                                   LightBrush="{DynamicResource WlrixTopShadow}"
+                                   DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                   OuterLineBrush="{DynamicResource WlrixOuterLine}"
+                                   Padding="12">
+                    <StackPanel Spacing="12">
+                        <TextBlock TextWrapping="Wrap"
+                                   Text="{Binding FileName, RelativeSource={RelativeSource TemplatedParent},
+                                                  StringFormat={StaticResource StringManagedFileChooserOverwritePromptFileAlreadyExistsText}}" />
+                        <StackPanel Orientation="Horizontal" Spacing="8"
+                                    HorizontalAlignment="Right">
+                            <Button MinWidth="90" IsDefault="True"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{DynamicResource StringManagedFileChooserOverwritePromptConfirmText}"
+                                    Command="{Binding Confirm, RelativeSource={RelativeSource TemplatedParent}}" />
+                            <Button MinWidth="90" IsCancel="True"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{DynamicResource StringManagedFileChooserOverwritePromptCancelText}"
+                                    Command="{Binding Cancel, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </StackPanel>
+                    </StackPanel>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

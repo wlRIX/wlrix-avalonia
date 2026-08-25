@@ -9,7 +9,7 @@
     <PackageId>Wlrix.Avalonia</PackageId>
     <!-- Bump on every localfeed rebuild: NuGet caches by id+version, so republishing a version
          means the cached copy is served and the new bits are silently ignored. -->
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <Authors>wlRIX contributors</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Avalonia control theme for wlRIX: chiselled bevels, hard outlines, and the wlRIX Classic palette.</Description>
