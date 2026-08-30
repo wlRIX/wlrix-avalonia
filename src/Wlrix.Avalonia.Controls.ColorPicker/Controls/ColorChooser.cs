@@ -68,7 +68,7 @@ public class ColorChooser : TemplatedControl
         AvaloniaProperty.Register<ColorChooser, double>(nameof(BlueValue), defaultBindingMode: BindingMode.TwoWay);
 
     // Canonical model: hue 0..360, saturation 0..1, value 0..1. Held separately from Color so
-    // hue/saturation survive a trip through greyscale (S=0 or V=0).
+    // hue/saturation survive a trip through grayscale (S=0 or V=0).
     private double _h = 240, _s = 1, _v = 1;
     private bool _updating;
 
