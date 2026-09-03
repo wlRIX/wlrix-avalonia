@@ -1,10 +1,10 @@
 using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
 using Avalonia.Layout;
-using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -28,30 +28,37 @@ internal static class Program
         var outDir = args.Length > 0 ? args[0] : ".";
         System.IO.Directory.CreateDirectory(outDir);
 
-        foreach (var scheme in new[] { "Classic", "ClassicG10", "ClassicG24" })
+        // Every scheme the theme ships, from the generated catalog, so a new palette JSON gets
+        // a screenshot without this list being edited.
+        foreach (var scheme in WlrixSchemes.All)
         {
             ApplyScheme(scheme);
             var window = new Window { Width = 520, Height = 1340 };
-            window.Content = BuildGallery(scheme);
+            window.Content = BuildGallery(scheme.Name);
             window.Show();
             for (int i = 0; i < 14; i++) Dispatcher.UIThread.RunJobs();
 
             var frame = window.CaptureRenderedFrame();
-            if (frame is null) { Console.WriteLine("NULL FRAME for " + scheme); return 2; }
-            var path = System.IO.Path.Combine(outDir, scheme + ".png");
+            if (frame is null) { Console.WriteLine("NULL FRAME for " + scheme.Id); return 2; }
+            var path = System.IO.Path.Combine(outDir, FileName(scheme) + ".png");
             frame.Save(path);
             Console.WriteLine("SAVED " + path + " " + frame.PixelSize.Width + "x" + frame.PixelSize.Height);
         }
         return 0;
     }
 
-    private static void ApplyScheme(string name)
+    // Through the theme, like an application does, rather than by overriding
+    // Application.Resources: these screenshots are meant to be what an app renders.
+    private static void ApplyScheme(WlrixScheme scheme)
     {
-        var app = Application.Current!;
-        var uri = new Uri("avares://Wlrix.Avalonia/Schemes/" + name + ".axaml");
-        app.Resources.MergedDictionaries.Clear();
-        app.Resources.MergedDictionaries.Add(new ResourceInclude((Uri?)null) { Source = uri });
+        if (WlrixTheme.From(Application.Current) is { } theme)
+            theme.Scheme = scheme.Id;
     }
+
+    // The artifact names the README already links: Classic.png, ClassicG10.png, ...
+    private static string FileName(WlrixScheme scheme) => string.Concat(
+        scheme.Id.Split('-', StringSplitOptions.RemoveEmptyEntries)
+            .Select(part => char.ToUpperInvariant(part[0]) + part[1..]));
 
     private static Control BuildGallery(string scheme)
     {

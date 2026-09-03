@@ -5,14 +5,10 @@
              x:Class="Wlrix.Demo.App"
              RequestedThemeVariant="Default">
 
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <!-- Active color scheme. Swapped at runtime by the scheme switcher. -->
-                <ResourceInclude Source="avares://Wlrix.Avalonia/Schemes/Classic.axaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
+    <!-- No scheme dictionary here on purpose. Application.Resources is consulted *before* a
+         style's own resources, so merging a scheme here would shadow the one WlrixTheme holds
+         and WlrixTheme.Scheme would appear to do nothing. The theme carries the default and
+         swaps it in place. -->
 
     <Application.Styles>
         <wlrix:WlrixTheme />

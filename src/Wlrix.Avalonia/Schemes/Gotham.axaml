@@ -6,7 +6,15 @@
     Source: IRIX 6.5 X11 schemes: Gotham/BaseColorPalette, Base/ImdPalette, Base/HighlightPalette, Base/Base
 -->
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Which scheme this is, so WlrixTheme can find the one merged dictionary it
+         owns and replace it. It cannot look for a ResourceInclude: the XAML compiler
+         resolves those away at build time, leaving a plain ResourceDictionary with
+         nothing to tell it apart from a control theme. -->
+    <sys:String x:Key="WlrixSchemeId">gotham</sys:String>
+
     <Color x:Key="WlrixFaceColor">#494949</Color>
     <Color x:Key="WlrixPanelColor">#2a2a2a</Color>
     <Color x:Key="WlrixReadOnlyColor">#383838</Color>

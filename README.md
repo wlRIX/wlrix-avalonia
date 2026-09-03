@@ -132,7 +132,7 @@ and exposes the color properties rather than owning windowing.
 ## Message dialogs
 
 `Wlrix.Avalonia.Dialogs.MessageDialog` is a reusable SGI/IRIX message window: an
-icon, a message in a light non-bevelled frame, and a configurable button row. One
+icon, a message in a light non-beveled frame, and a configurable button row. One
 `DialogType` (`Error` / `Critical` / `Question` / `Warning` / `Information`)
 selects the icon and a default title. The caller specifies the type and width; the
 height auto-fits the (wrapped) message.
@@ -260,18 +260,39 @@ signature of the look.
 IRIX stored no bevel shadows — Motif derived them per widget — so `SgiTopShadow`
 and `SgiBottomShadow` are computed by the generator rather than authored.
 
-Because every control binds with `DynamicResource`, an app can override the
-active scheme by merging another one into `Application.Resources`, and swap it
-at runtime:
+### Switching at runtime
+
+Because every control binds with `DynamicResource`, the scheme can change while
+the app is running. Set `WlrixTheme.Scheme` to a scheme id:
 
 ```csharp
-var uri = new Uri("avares://Wlrix.Avalonia/Schemes/IndigoMagicG24.axaml");
-Application.Current!.Resources.MergedDictionaries.Clear();
-Application.Current!.Resources.MergedDictionaries.Add(
-    new ResourceInclude((Uri?)null) { Source = uri });
+if (WlrixTheme.From(Application.Current) is { } theme)
+    theme.Scheme = "gotham";
 ```
 
-The demo's scheme dropdown does exactly this.
+That swaps the one dictionary the theme owns and leaves everything else alone —
+including anything the app has merged into `Application.Resources` itself, which
+most wlRIX apps do for the controls this theme does not cover. An id naming no
+shipped scheme falls back to the default rather than throwing.
+
+**Do not merge a scheme into `Application.Resources`.** It is consulted *before*
+a style's own resources, so a scheme there shadows the theme's and
+`WlrixTheme.Scheme` appears to do nothing. The theme already carries the default.
+
+The schemes themselves come from the generated catalog, so a picker lists
+whatever this build ships rather than a copy of the list:
+
+```csharp
+foreach (var scheme in WlrixSchemes.All)
+    Console.WriteLine($"{scheme.Id}\t{scheme.Name}\t{(scheme.IsDark ? "dark" : "light")}");
+
+var current = WlrixSchemes.ById(id) ?? WlrixSchemes.Default;
+```
+
+`Schemes/SchemeCatalog.g.cs` is generated alongside the dictionaries by
+`just palette`, from the same JSON — so adding a palette file adds an entry to
+every scheme picker with no other edit. The demo's dropdown and wlRIX's Color
+Schemes panel are both built from it.
 
 ## The `BevelBorder` primitive
 

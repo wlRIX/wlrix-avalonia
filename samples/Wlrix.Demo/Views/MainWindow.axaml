@@ -44,12 +44,9 @@
                          Padding="8" Margin="0,0,0,8">
             <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                 <TextBlock Text="Color scheme:" FontWeight="Bold" VerticalAlignment="Center" />
-                <ComboBox Name="SchemeBox" Width="180" SelectedIndex="0">
-                    <ComboBoxItem>Classic (gamma 1.7)</ComboBoxItem>
-                    <ComboBoxItem>Classic (gamma 1.0)</ComboBoxItem>
-                    <ComboBoxItem>Classic (gamma 2.4)</ComboBoxItem>
-                    <ComboBoxItem>Gotham</ComboBoxItem>
-                </ComboBox>
+                <!-- Filled from WlrixSchemes.All in the code-behind, so the list is whatever
+                     the theme actually ships rather than a copy of it. -->
+                <ComboBox Name="SchemeBox" Width="200" />
             </StackPanel>
         </wlrix:BevelBorder>
 
