@@ -46,6 +46,20 @@ public class PathBar : TemplatedControl
         AvaloniaProperty.Register<PathBar, char>(nameof(Separator), '/');
 
     /// <summary>
+    /// A leading portion of <see cref="Path"/> that is shown as one crumb and never split
+    /// further. Empty by default, which is the plain local-path case.
+    /// </summary>
+    /// <remarks>
+    /// For a remote location the authority is not a path and must not be chopped at its
+    /// separators: <c>smb://nas.local/photos/2024</c> split on '/' yields crumbs for
+    /// <c>smb:</c> and an empty segment, neither of which is anywhere to navigate to.
+    /// Setting <c>Root</c> to <c>smb://nas.local/photos</c> makes the share one nub and
+    /// splits only what follows it.
+    /// </remarks>
+    public static readonly StyledProperty<string?> RootProperty =
+        AvaloniaProperty.Register<PathBar, string?>(nameof(Root));
+
+    /// <summary>
     /// Horizontal offset, in pixels, of the text inside the field (border + outline +
     /// left padding). Nubs are positioned relative to this so they line up with the text.
     /// </summary>
@@ -68,6 +82,7 @@ public class PathBar : TemplatedControl
     {
         PathProperty.Changed.AddClassHandler<PathBar>((x, _) => x.RebuildNubs());
         SeparatorProperty.Changed.AddClassHandler<PathBar>((x, _) => x.RebuildNubs());
+        RootProperty.Changed.AddClassHandler<PathBar>((x, _) => x.RebuildNubs());
         TextInsetProperty.Changed.AddClassHandler<PathBar>((x, _) => x.RebuildNubs());
     }
 
@@ -81,6 +96,12 @@ public class PathBar : TemplatedControl
     {
         get => GetValue(SeparatorProperty);
         set => SetValue(SeparatorProperty, value);
+    }
+
+    public string? Root
+    {
+        get => GetValue(RootProperty);
+        set => SetValue(RootProperty, value);
     }
 
     public double TextInset
@@ -177,7 +198,7 @@ public class PathBar : TemplatedControl
         var rightEdge = _nubs.Bounds.Width - fieldEdge;
 
         // Left pixel position of each crumb's segment within the field.
-        var crumbs = new List<Crumb>(BuildCrumbs(path, Separator));
+        var crumbs = new List<Crumb>(BuildCrumbs(path, Separator, Root));
         var lefts = new double[crumbs.Count];
         for (var i = 0; i < crumbs.Count; i++)
             lefts[i] = inset + MeasureWidth(path.Substring(0, crumbs[i].NameStart));
@@ -202,13 +223,24 @@ public class PathBar : TemplatedControl
     /// Splits an absolute path into crumbs. Each crumb records where its name begins in the
     /// original string (so a nub can be placed above it) and the full path it navigates to.
     /// </summary>
-    private static IEnumerable<Crumb> BuildCrumbs(string path, char sep)
+    /// <param name="root">
+    /// An unsplittable prefix of <paramref name="path"/>, or null. It becomes the first
+    /// crumb, and only the remainder is split.
+    /// </param>
+    private static IEnumerable<Crumb> BuildCrumbs(string path, char sep, string? root = null)
     {
         var i = 0;
 
-        // Leading-separator root (e.g. "/" in "/usr/people").
-        if (path.Length > 0 && path[0] == sep)
+        if (!string.IsNullOrEmpty(root) && path.StartsWith(root, StringComparison.Ordinal))
         {
+            // One crumb for the whole authority, then carry on from just past it. A
+            // trailing separator on the root is skipped by the loop below.
+            yield return new Crumb(0, root);
+            i = root.Length;
+        }
+        else if (path.Length > 0 && path[0] == sep)
+        {
+            // Leading-separator root (e.g. "/" in "/usr/people").
             yield return new Crumb(0, sep.ToString());
             i = 1;
         }

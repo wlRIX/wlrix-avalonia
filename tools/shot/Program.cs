@@ -12,6 +12,7 @@ using Wlrix.Avalonia;
 using Wlrix.Avalonia.Controls;
 using Wlrix.Avalonia.Controls.ColorPicker;
 using Wlrix.Avalonia.Controls.ColorPicker.Controls;
+using Avalonia.Media.Imaging;
 
 // Dev tool: renders the gallery to a PNG for each color scheme using the real Skia
 // backend (no display required). Usage: dotnet run -- <outputDir>
@@ -41,7 +42,9 @@ internal static class Program
             var frame = window.CaptureRenderedFrame();
             if (frame is null) { Console.WriteLine("NULL FRAME for " + scheme.Id); return 2; }
             var path = System.IO.Path.Combine(outDir, FileName(scheme) + ".png");
-            frame.Save(path);
+            // Avalonia 12.1 deprecated Save(string, int?) for the options overload.
+            // The default options are what the old call meant: PNG, no quality hint.
+            frame.Save(path, new PngBitmapEncoderOptions());
             Console.WriteLine("SAVED " + path + " " + frame.PixelSize.Width + "x" + frame.PixelSize.Height);
         }
         return 0;

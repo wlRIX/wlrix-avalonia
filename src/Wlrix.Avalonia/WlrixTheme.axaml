@@ -28,6 +28,7 @@
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ProgressBar.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/TabControl.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/TreeView.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/TableView.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Expander.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/GridSplitter.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/NumericUpDown.axaml" />
@@ -75,6 +76,9 @@
         <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
     </Style>
     <Style Selector="ComboBoxItem:pointerover TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+    </Style>
+    <Style Selector="TableViewRow:selected TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
     </Style>
 </Styles>

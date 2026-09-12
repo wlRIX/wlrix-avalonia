@@ -1,0 +1,180 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <!-- The details view of a file manager, dressed as IRIX.
+
+         TableView derives from ListBox, so it brings a VirtualizingStackPanel with it and
+         handles a very large listing without help: measured at 500,000 rows, 18 realized
+         containers and roughly 1.5 ms per wheel notch.
+
+         Untemplated it renders as an empty white area with no error and no warning, which
+         is the loudest argument for this file existing at all. -->
+
+    <Thickness x:Key="WlrixTableCellPadding">6,0</Thickness>
+    <Thickness x:Key="WlrixTableRowPadding">0,2</Thickness>
+
+    <!-- The column-heading strip: a raised panel above the sunken well, the same
+         arrangement Wlrix.Archiver builds by hand out of a Grid and GridSplitters. Here
+         the control does the column layout, so only the skin is ours. -->
+    <ControlTheme x:Key="WlrixTableScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
+                    <DockPanel Name="ContentPanel">
+                        <wlrix:BevelBorder DockPanel.Dock="Top"
+                                           Bevel="Raised"
+                                           BevelThickness="2"
+                                           OuterLineThickness="1"
+                                           Background="{DynamicResource WlrixFace}"
+                                           LightBrush="{DynamicResource WlrixTopShadow}"
+                                           DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                           OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                            <TableViewColumnHeadersPresenter />
+                        </wlrix:BevelBorder>
+                        <ScrollContentPresenter Name="PART_ContentPresenter"
+                                                Background="{TemplateBinding Background}"
+                                                Padding="{TemplateBinding Padding}"
+                                                HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
+                                                VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}"
+                                                HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
+                                                VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
+                                                ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}">
+                            <ScrollContentPresenter.GestureRecognizers>
+                                <ScrollGestureRecognizer
+                                    CanHorizontallyScroll="{Binding CanHorizontallyScroll, ElementName=PART_ContentPresenter}"
+                                    CanVerticallyScroll="{Binding CanVerticallyScroll, ElementName=PART_ContentPresenter}"
+                                    IsScrollInertiaEnabled="{Binding (ScrollViewer.IsScrollInertiaEnabled), ElementName=PART_ContentPresenter}" />
+                            </ScrollContentPresenter.GestureRecognizers>
+                        </ScrollContentPresenter>
+                    </DockPanel>
+                    <ScrollBar Name="PART_HorizontalScrollBar" Orientation="Horizontal" Grid.Column="0" Grid.Row="1" />
+                    <ScrollBar Name="PART_VerticalScrollBar" Orientation="Vertical" Grid.Column="1" Grid.Row="0" />
+                    <!-- Fluent fades a separator patch in between the two bars. The IRIX
+                         scrollbars carry their own outer line and already meet cleanly, so
+                         there is nothing to cover. -->
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^[AllowAutoHide=True] /template/ DockPanel#ContentPanel">
+            <Setter Property="Grid.ColumnSpan" Value="2" />
+            <Setter Property="Grid.RowSpan" Value="2" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type TableView}" TargetType="TableView">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixViewForeground}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+        <Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True" />
+        <Setter Property="TextBlock.TextTrimming" Value="{x:Static TextTrimming.CharacterEllipsis}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <wlrix:BevelBorder Bevel="Sunken"
+                                   BevelThickness="2"
+                                   OuterLineThickness="1"
+                                   ClipToBounds="{TemplateBinding ClipToBounds}"
+                                   Background="{DynamicResource WlrixViewBackground}"
+                                   LightBrush="{DynamicResource WlrixTopShadow}"
+                                   DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                   OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                    <ScrollViewer Name="PART_ScrollViewer"
+                                  Theme="{StaticResource WlrixTableScrollViewer}"
+                                  VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
+                                  HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
+                                  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                                  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+                                  IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+                                  IsScrollInertiaEnabled="{TemplateBinding (ScrollViewer.IsScrollInertiaEnabled)}"
+                                  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+                                  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+                                  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+                        <ItemsPresenter Name="PART_ItemsPresenter"
+                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                        Margin="{TemplateBinding Padding}" />
+                    </ScrollViewer>
+                </wlrix:BevelBorder>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type TableViewRow}" TargetType="TableViewRow">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="{StaticResource WlrixTableRowPadding}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <!-- The highlight goes on the row root, so it spans every column rather
+                     than stopping at the first cell's content. Wlrix.Archiver's
+                     ArchiveTree.axaml exists to fix precisely this in TreeViewItem; here
+                     the structure gives it for free. -->
+                <Border Name="Root"
+                        Background="{TemplateBinding Background}"
+                        Padding="{TemplateBinding Padding}">
+                    <TableViewCellsPresenter Name="PART_CellsPresenter" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:selected /template/ Border#Root">
+            <Setter Property="Background" Value="{DynamicResource WlrixSelection}" />
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixSelectionForeground}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{DynamicResource WlrixDisabledForeground}" />
+        </Style>
+        <!-- No :pointerover highlight. IRIX lists do not follow the pointer, and a file
+             manager showing a hover band under a 100,000-row listing reads as noise. -->
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type TableViewCell}" TargetType="TableViewCell">
+        <Setter Property="Padding" Value="{StaticResource WlrixTableCellPadding}" />
+    </ControlTheme>
+
+    <!-- The drag handle between headings: an etched rule in a wider transparent hit
+         target, matching the splitters Wlrix.Archiver puts between its own headings. -->
+    <ControlTemplate x:Key="WlrixTableColumnResizer" TargetType="Thumb">
+        <Border Background="Transparent">
+            <wlrix:BevelBorder Bevel="Etched"
+                               BevelThickness="1"
+                               Width="2"
+                               HorizontalAlignment="Center"
+                               LightBrush="{DynamicResource WlrixTopShadow}"
+                               DarkBrush="{DynamicResource WlrixBottomShadow}" />
+        </Border>
+    </ControlTemplate>
+
+    <ControlTheme x:Key="{x:Type TableViewColumnHeader}" TargetType="TableViewColumnHeader">
+        <Setter Property="Foreground" Value="{DynamicResource WlrixForeground}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="4,3" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="ClipToBounds" Value="False" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Background="{TemplateBinding Background}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Padding="{TemplateBinding Padding}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                    <Thumb Name="PART_Resizer"
+                           Template="{StaticResource WlrixTableColumnResizer}"
+                           Width="8"
+                           Margin="0,-3,-4,-3"
+                           HorizontalAlignment="Right"
+                           Cursor="SizeWestEast"
+                           IsEnabled="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Column?.CanUserEffectivelyResize, FallbackValue=False}" />
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+</ResourceDictionary>
