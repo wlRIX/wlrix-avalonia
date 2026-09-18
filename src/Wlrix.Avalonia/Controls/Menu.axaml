@@ -209,9 +209,12 @@
         <Setter Property="ItemContainerTheme" Value="{StaticResource WlrixTopLevelMenuItem}" />
         <Setter Property="Template">
             <ControlTemplate>
+                <!-- TemplateBinding rather than the brush directly, so the Background setter
+                     above is what decides and a derived theme can change it. wlrix:MenuBar
+                     does exactly that; with the brush inlined here its setter did nothing. -->
                 <wlrix:BevelBorder Bevel="Raised"
                                  BevelThickness="2"
-                                 Background="{DynamicResource WlrixFace}"
+                                 Background="{TemplateBinding Background}"
                                  LightBrush="{DynamicResource WlrixTopShadow}"
                                  DarkBrush="{DynamicResource WlrixBottomShadow}"
                                  Padding="2,1">

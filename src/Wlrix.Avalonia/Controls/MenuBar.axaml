@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
+
+    <!--
+        The application menu bar. See MenuBar.cs for why this is a control rather than a theme
+        an application remembers to apply.
+
+        Everything visual is inherited from the Menu theme; only two things differ, and both
+        are what make a bar a bar rather than a floating menu:
+
+        - The items sit in a DockPanel, so `DockPanel.Dock="Right"` on Help puts it against the
+          right edge. LastChildFill is off, or the final item would stretch across the gap and
+          swallow clicks on empty bar.
+        - It paints WlrixMenubarBackground rather than the panel face.
+
+        Merged after Menu.axaml in WlrixTheme.axaml, because BasedOn resolves at parse time and
+        the base theme has to exist by then.
+    -->
+    <ControlTheme x:Key="{x:Type wlrix:MenuBar}"
+                  TargetType="wlrix:MenuBar"
+                  BasedOn="{StaticResource {x:Type Menu}}">
+        <Setter Property="Background" Value="{DynamicResource WlrixMenubarBackground}" />
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <DockPanel LastChildFill="False" />
+            </ItemsPanelTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

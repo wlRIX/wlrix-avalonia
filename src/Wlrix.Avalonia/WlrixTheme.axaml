@@ -37,6 +37,8 @@
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToolTip.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Separator.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Menu.axaml" />
+                <!-- After Menu.axaml: MenuBar's theme is BasedOn it, and that resolves here. -->
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/MenuBar.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToolchestMenu.axaml" />
                 <!-- Avalonia's in-process file picker. wlRIX ships no FileChooser portal, so
                      this is what `StorageProvider` opens; untemplated it is a blank window. -->
