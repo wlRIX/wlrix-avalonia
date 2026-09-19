@@ -14,6 +14,7 @@
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Schemes/Brushes.axaml" />
 
                 <!-- Control themes -->
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Window.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Button.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/RepeatButton.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ToggleButton.axaml" />

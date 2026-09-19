@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- wlRIX draws no window chrome — wlrix-compositor decorates windows server side, as 4Dwm
+         did — so this template exists for exactly one reason: PART_VisualLayerManager.
+
+         With no Window theme, Avalonia falls back to ContentControl's default template, which is
+         a bare ContentPresenter. It draws correctly, which is why this went unnoticed for the
+         life of the theme, but it carries no VisualLayerManager, and that is where the adorner,
+         overlay and light dismiss layers live. LightDismissOverlayLayer.GetLightDismissOverlayLayer
+         then answers null and Popup skips installing light dismiss altogether, so a menu could not
+         be taken down by clicking away from it inside the same window. Nothing logs any of it: it
+         is the usual wlRIX failure of an unthemed control, only silent rather than blank.
+
+         The ContentPresenter keeps every binding the fallback template gave it, so wrapping it
+         changes nothing about how a window draws. -->
+    <ControlTheme x:Key="{x:Type Window}" TargetType="Window">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <VisualLayerManager Name="PART_VisualLayerManager">
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Background="{TemplateBinding Background}"
+                                      BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      CornerRadius="{TemplateBinding CornerRadius}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </VisualLayerManager>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>
