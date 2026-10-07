@@ -85,20 +85,52 @@
                                  DarkBrush="Transparent">
                     <Grid Margin="{TemplateBinding Padding}"
                           ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-                        <!-- Check / radio marker -->
+                        <!-- Check / radio marker. IRIX menus draw the same indicators as the
+                             stand-alone controls, only smaller: a square that sinks and shows
+                             the red check mark for a toggle (CheckBox.axaml), and a diamond
+                             that sinks and shows the radio mark for one-of-many (RadioButton.axaml).
+                             Both are always in the template; the :toggle / :radio styles below
+                             pick one. -->
                         <ContentControl Name="PART_ToggleIconPresenter"
                                         Grid.Column="0"
                                         IsVisible="False"
-                                        Width="14" Height="14"
+                                        Width="16" Height="16"
+                                        Margin="0,0,4,0"
                                         VerticalAlignment="Center">
                             <Panel>
-                                <Path Name="ToggleCheck"
-                                      Data="M 0,4 L 3,8 L 9,0"
-                                      Stroke="{DynamicResource WlrixForeground}"
-                                      StrokeThickness="2"
-                                      IsVisible="False"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center" />
+                                <wlrix:BevelBorder Name="ToggleBox"
+                                                 Width="11" Height="11"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"
+                                                 IsVisible="False"
+                                                 Bevel="Raised"
+                                                 BevelThickness="2"
+                                                 OuterLineThickness="1"
+                                                 Background="{DynamicResource WlrixFace}"
+                                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                                    <Border Name="ToggleMark"
+                                            Background="{DynamicResource WlrixCheck}"
+                                            IsVisible="False" />
+                                </wlrix:BevelBorder>
+                                <wlrix:BevelBorder Name="RadioBox"
+                                                 Width="10" Height="10"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"
+                                                 RenderTransform="rotate(45deg)"
+                                                 IsVisible="False"
+                                                 Bevel="Raised"
+                                                 BevelThickness="2"
+                                                 OuterLineThickness="1"
+                                                 Background="{DynamicResource WlrixFace}"
+                                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
+                                    <Border Name="RadioMark"
+                                            Background="{DynamicResource WlrixRadio}"
+                                            IsVisible="False" />
+                                </wlrix:BevelBorder>
                             </Panel>
                         </ContentControl>
 
@@ -183,15 +215,57 @@
             <Setter Property="IsVisible" Value="False" />
         </Style>
 
-        <!-- Toggle / radio check marks -->
+        <!-- Toggle / radio indicators -->
         <Style Selector="^:toggle /template/ ContentControl#PART_ToggleIconPresenter">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:toggle /template/ wlrix|BevelBorder#ToggleBox">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:toggle:checked /template/ wlrix|BevelBorder#ToggleBox">
+            <Setter Property="Bevel" Value="Sunken" />
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+        <Style Selector="^:toggle:checked /template/ Border#ToggleMark">
             <Setter Property="IsVisible" Value="True" />
         </Style>
         <Style Selector="^:radio /template/ ContentControl#PART_ToggleIconPresenter">
             <Setter Property="IsVisible" Value="True" />
         </Style>
-        <Style Selector="^:checked /template/ Path#ToggleCheck">
+        <Style Selector="^:radio /template/ wlrix|BevelBorder#RadioBox">
             <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^:radio:checked /template/ wlrix|BevelBorder#RadioBox">
+            <Setter Property="Bevel" Value="Sunken" />
+            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+        </Style>
+        <Style Selector="^:radio:checked /template/ Border#RadioMark">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <!-- A menu's title row (IRIX popup menus open with the name of what they act on,
+             centered over an etched rule). Mark it with Classes="title"; it is drawn as a
+             label, so set IsEnabled="False" or leave it without a command, and the theme
+             keeps the disabled dimming off it. -->
+        <Style Selector="^.title">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <StackPanel>
+                        <ContentPresenter Content="{TemplateBinding Header}"
+                                          HorizontalAlignment="Center"
+                                          Margin="8,3,8,2"
+                                          FontWeight="Bold"
+                                          Foreground="{DynamicResource WlrixForeground}" />
+                        <wlrix:BevelBorder Bevel="Etched"
+                                         BevelThickness="2"
+                                         Height="2"
+                                         Margin="0,0,0,2"
+                                         LightBrush="{DynamicResource WlrixTopShadow}"
+                                         DarkBrush="{DynamicResource WlrixBottomShadow}" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter>
         </Style>
 
         <Style Selector="^:disabled">

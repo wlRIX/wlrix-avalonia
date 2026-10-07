@@ -40,13 +40,16 @@ Add the theme to your `App.axaml` styles:
 `WlrixTheme` is the only style you need — there is no `FluentTheme` underneath.
 The following controls are templated and pick up the SGI look:
 
-- Buttons: `Button`, `RepeatButton`, `ToggleButton` (plus an `SgiLedButton`
-  `ToggleButton` variant with a sunken indicator light)
+- Buttons: `Button`, `RepeatButton`, `ToggleButton` (plus a `WlrixLedButton`
+  `ToggleButton` theme with a sunken indicator light)
 - Selection: `CheckBox`, `RadioButton`, `ComboBox`, `ListBox`, `TreeView`
 - Text & numeric: `TextBox`, `NumericUpDown` (`ButtonSpinner`)
 - Range: `Slider`, `ProgressBar`, `ScrollBar`
 - Containers: `ScrollViewer`, `TabControl`, `Expander`, `GridSplitter`
-- Menus & chrome: `Menu`/`MenuItem`, `ContextMenu`, `ToolTip`
+- Menus & chrome: `Menu`/`MenuItem`, `ContextMenu`, `ToolTip`. Toggle menu
+  items show a small square that sinks with the red check, radio items a
+  diamond, as IRIX menus do; `Classes="title"` turns a `MenuItem` into the
+  bold, centered title row a popup menu opens with
 - Custom: `BevelBorder`, `PathBar`, `Thumbwheel`
 
 The date/calendar family (`Calendar`, `DatePicker`, `TimePicker`) is not yet
