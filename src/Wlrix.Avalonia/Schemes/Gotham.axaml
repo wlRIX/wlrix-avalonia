@@ -54,6 +54,9 @@
     <Color x:Key="WlrixDisabledCheckColor">#949494</Color>
     <Color x:Key="WlrixSelectFillColor">#ffff00</Color>
     <Color x:Key="WlrixIndicatorLightColor">#ffffff</Color>
+    <Color x:Key="WlrixIconTintColor">#aaaaaa</Color>
+    <Color x:Key="WlrixIconTintHoverColor">#ffffff</Color>
+    <Color x:Key="WlrixIconTintSelectedColor">#ffff00</Color>
     <Color x:Key="WlrixErrorColor">#a60000</Color>
     <Color x:Key="WlrixWarningColor">#00377d</Color>
     <Color x:Key="WlrixInformationColor">#085605</Color>

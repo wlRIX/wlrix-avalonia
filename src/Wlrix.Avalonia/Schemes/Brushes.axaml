@@ -46,6 +46,9 @@
     <SolidColorBrush x:Key="WlrixDisabledCheck" Color="{DynamicResource WlrixDisabledCheckColor}" />
     <SolidColorBrush x:Key="WlrixSelectFill" Color="{DynamicResource WlrixSelectFillColor}" />
     <SolidColorBrush x:Key="WlrixIndicatorLight" Color="{DynamicResource WlrixIndicatorLightColor}" />
+    <SolidColorBrush x:Key="WlrixIconTint" Color="{DynamicResource WlrixIconTintColor}" />
+    <SolidColorBrush x:Key="WlrixIconTintHover" Color="{DynamicResource WlrixIconTintHoverColor}" />
+    <SolidColorBrush x:Key="WlrixIconTintSelected" Color="{DynamicResource WlrixIconTintSelectedColor}" />
     <SolidColorBrush x:Key="WlrixError" Color="{DynamicResource WlrixErrorColor}" />
     <SolidColorBrush x:Key="WlrixWarning" Color="{DynamicResource WlrixWarningColor}" />
     <SolidColorBrush x:Key="WlrixInformation" Color="{DynamicResource WlrixInformationColor}" />
