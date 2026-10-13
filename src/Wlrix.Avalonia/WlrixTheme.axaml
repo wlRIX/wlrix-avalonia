@@ -23,6 +23,7 @@
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/TextBox.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ScrollViewer.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ScrollBar.axaml" />
+                <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ItemsControl.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ListBox.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/ComboBox.axaml" />
                 <ResourceInclude Source="avares://Wlrix.Avalonia/Controls/Slider.axaml" />

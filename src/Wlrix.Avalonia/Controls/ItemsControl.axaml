@@ -1,0 +1,21 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ItemsControl, the plain repeater: an items presenter honoring the declared ItemsPanel, and
+         nothing else. It has no look of its own. It is a layout device, which is why apps reach
+         for it instead of ListBox when they do not want a selection highlight.
+
+         It has to be here because this theme is standalone. With no base theme underneath, a
+         control the theme does not cover gets no template and renders nothing, with no error.
+         Before this existed, Wlrix.Files, Wlrix.Writer, Wlrix.SourcePicker and two settings
+         panels each carried a copy. AvaloniaEdit's TextArea also hosts its line-number margin in
+         one. -->
+    <ControlTheme x:Key="{x:Type ItemsControl}" TargetType="ItemsControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+</ResourceDictionary>
