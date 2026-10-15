@@ -207,6 +207,9 @@ A dialog plays its IRIX sound as it opens: `dialog-error`, `dialog-error-serious
 sends, so whether it is heard is the Sounds panel's *System Alerts Sounds* box. With no sound daemon it is silent. Set
 `PlaysSound = false`, or pass `playSound: false` to `ShowAsync`, for a dialog that should open quietly.
 
+A dialog with no window to be modal to can be shown with `Show()` instead of `ShowDialog`; `Result` says which button
+closed it, read from `Closed`. Files' `--empty-trash` asks the desktop's Empty Dumpster question this way.
+
 The dialogs are plain `Window`s that inherit the app-level `WlrixTheme`, so no extra
 styles are required. Icons live under `Assets/Icons/{Type}.png`; until they are
 added the icon slot stays empty (its space is reserved so layout doesn't shift).

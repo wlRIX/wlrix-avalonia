@@ -79,10 +79,21 @@ public partial class MessageDialog : Window
         OnDialogTypeChanged();
         OnButtonsChanged();
 
-        this.FindControl<Button>("PART_OkButton")!.Click += (_, _) => Close(DialogResult.Ok);
-        this.FindControl<Button>("PART_CancelButton")!.Click += (_, _) => Close(DialogResult.Cancel);
+        this.FindControl<Button>("PART_OkButton")!.Click += (_, _) => Finish(DialogResult.Ok);
+        this.FindControl<Button>("PART_CancelButton")!.Click += (_, _) => Finish(DialogResult.Cancel);
         this.FindControl<Button>("PART_HelpButton")!.Click += OnHelpClick;
     }
+
+    /// <summary>
+    /// The button the dialog was closed with, or null if it was closed some other way.
+    /// </summary>
+    /// <remarks>
+    /// What <see cref="ShowAsync"/> returns, kept here as well for a dialog shown with
+    /// <see cref="Window.Show()"/>: one with no window to be modal to -- a question asked on behalf
+    /// of something that has no window of its own -- cannot use <c>ShowDialog</c>, and so has
+    /// no other way to hear the answer. Read it from <see cref="Window.Closed"/>.
+    /// </remarks>
+    public DialogResult? Result { get; private set; }
 
     /// <summary>
     /// Raised when the user clicks Help. The dialog stays open.
@@ -231,6 +242,12 @@ public partial class MessageDialog : Window
         base.OnOpened(e);
         if (PlaysSound)
             DialogSound.Play(DialogType);
+    }
+
+    private void Finish(DialogResult result)
+    {
+        Result = result;
+        Close(result);
     }
 
     private void OnHelpClick(object? sender, RoutedEventArgs e) => HelpRequested?.Invoke(this, EventArgs.Empty);

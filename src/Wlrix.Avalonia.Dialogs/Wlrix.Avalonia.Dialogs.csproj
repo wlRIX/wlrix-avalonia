@@ -2,8 +2,9 @@
 
     <PropertyGroup>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <!-- 1.1.0: dialogs play their sound when they open (DialogSound, PlaysSound). -->
-        <Version>1.1.0</Version>
+        <!-- 1.1.0: dialogs play their sound when they open (DialogSound, PlaysSound).
+             1.2.0: MessageDialog.Result, for a dialog shown without an owner. -->
+        <Version>1.2.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
