@@ -202,6 +202,11 @@ default just like an explicit string. `ShowAsync` is the convenience layer over
 these properties — use it for one-off calls and bindings for fully localized,
 data-driven dialogs.
 
+A dialog plays its IRIX sound as it opens: `dialog-error`, `dialog-error-serious` (Critical), `dialog-question`,
+`dialog-warning` or `dialog-information`. It goes through `wlrix-sound`'s socket, the same request every wlRIX component
+sends, so whether it is heard is the Sounds panel's *System Alerts Sounds* box. With no sound daemon it is silent. Set
+`PlaysSound = false`, or pass `playSound: false` to `ShowAsync`, for a dialog that should open quietly.
+
 The dialogs are plain `Window`s that inherit the app-level `WlrixTheme`, so no extra
 styles are required. Icons live under `Assets/Icons/{Type}.png`; until they are
 added the icon slot stays empty (its space is reserved so layout doesn't shift).

@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <!-- 1.1.0: dialogs play their sound when they open (DialogSound, PlaysSound). -->
+        <Version>1.1.0</Version>
     </PropertyGroup>
 
     <ItemGroup>

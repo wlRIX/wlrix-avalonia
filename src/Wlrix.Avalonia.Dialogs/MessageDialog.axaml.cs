@@ -12,6 +12,11 @@ namespace Wlrix.Avalonia.Dialogs;
 /// which of OK / Cancel / Help appear. The width is given by the caller and the height
 /// auto-sizes to the message. OK and Cancel close the dialog with a <see cref="DialogResult"/>;
 /// Help raises <see cref="HelpRequested"/> and leaves it open.
+/// <para>
+/// Opening plays the type's IRIX dialog sound through <c>wlrix-sound</c> (see
+/// <see cref="DialogSound"/>), unless <see cref="PlaysSound"/> is turned off. Whether it is
+/// heard is the user's to decide, in the Sounds panel.
+/// </para>
 /// </summary>
 public partial class MessageDialog : Window
 {
@@ -45,6 +50,14 @@ public partial class MessageDialog : Window
 
     public static readonly StyledProperty<bool> IsCancelVisibleProperty =
         AvaloniaProperty.Register<MessageDialog, bool>(nameof(IsCancelVisible), true);
+
+    /// <summary>
+    /// Whether opening the dialog plays its sound. On by default; off for a dialog that opens
+    /// often enough, or in answer to something already noisy enough, that a sound each time
+    /// would be one too many.
+    /// </summary>
+    public static readonly StyledProperty<bool> PlaysSoundProperty =
+        AvaloniaProperty.Register<MessageDialog, bool>(nameof(PlaysSound), true);
 
     public static readonly StyledProperty<bool> IsHelpVisibleProperty =
         AvaloniaProperty.Register<MessageDialog, bool>(nameof(IsHelpVisible), true);
@@ -112,6 +125,12 @@ public partial class MessageDialog : Window
         set => SetValue(HelpTextProperty, value);
     }
 
+    public bool PlaysSound
+    {
+        get => GetValue(PlaysSoundProperty);
+        set => SetValue(PlaysSoundProperty, value);
+    }
+
     public DialogButtons Buttons
     {
         get => GetValue(ButtonsProperty);
@@ -154,13 +173,15 @@ public partial class MessageDialog : Window
     /// <param name="okText">OK button text. When null, the default ("OK") is used.</param>
     /// <param name="cancelText">Cancel button text. When null, the default ("Cancel") is used.</param>
     /// <param name="helpText">Help button text. When null, the default ("Help") is used.</param>
+    /// <param name="playSound">Whether the dialog plays its sound as it opens. See
+    /// <see cref="PlaysSound"/>.</param>
     /// <returns>
     /// A task containing the button result. Null if the dialog was closed without a button
     /// press (caller must handle this case).
     /// </returns>
     public static Task<DialogResult?> ShowAsync(Window owner, DialogType type, string message, double width = 360,
         EventHandler? onHelp = null, DialogButtons buttons = DialogButtons.OkCancel, string? title = null,
-        string? okText = null, string? cancelText = null, string? helpText = null)
+        string? okText = null, string? cancelText = null, string? helpText = null, bool playSound = true)
     {
         // Help is meaningless without a handler — drop it if none was provided.
         if (onHelp is null)
@@ -175,7 +196,8 @@ public partial class MessageDialog : Window
             Buttons = buttons,
             Width = width,
             MinWidth = width,
-            MaxWidth = width
+            MaxWidth = width,
+            PlaysSound = playSound,
         };
         if (title is not null)
             dialog.Title = title;
@@ -198,6 +220,17 @@ public partial class MessageDialog : Window
         // pins the title against the type-derived default.
         if (change.Property == TitleProperty && !_applyingDefaultTitle)
             _explicitTitle = true;
+    }
+
+    /// <summary>
+    /// The sound goes with the dialog appearing, as IRIX's did, rather than with its creation:
+    /// a dialog built and never shown says nothing.
+    /// </summary>
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+        if (PlaysSound)
+            DialogSound.Play(DialogType);
     }
 
     private void OnHelpClick(object? sender, RoutedEventArgs e) => HelpRequested?.Invoke(this, EventArgs.Empty);
