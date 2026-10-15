@@ -57,6 +57,8 @@
     <Color x:Key="WlrixIconTintColor">#c9c9c9</Color>
     <Color x:Key="WlrixIconTintHoverColor">#ffffff</Color>
     <Color x:Key="WlrixIconTintSelectedColor">#ffff00</Color>
+    <Color x:Key="WlrixIconTintGhostColor">#868686</Color>
+    <Color x:Key="WlrixIconTintDropColor">#0000ff</Color>
     <Color x:Key="WlrixErrorColor">#ff0000</Color>
     <Color x:Key="WlrixWarningColor">#0000ff</Color>
     <Color x:Key="WlrixInformationColor">#00ff00</Color>
