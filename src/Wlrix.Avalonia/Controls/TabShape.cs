@@ -9,6 +9,7 @@ namespace Wlrix.Avalonia.Controls;
 /// page) and a narrower opposite edge with chamfered corners and slanted sides. Used behind the
 /// header in the themed <see cref="TabItem"/> template. <see cref="FlipVertical"/>
 /// orients the wide base toward the page for top- (base down) or bottom- (base up) placed strips.
+/// The base is left open: the page draws that edge, and breaks it where the selected tab sits.
 /// </summary>
 public sealed class TabShape : Control
 {
@@ -63,17 +64,26 @@ public sealed class TabShape : Control
     public static readonly StyledProperty<double> OutlineThicknessProperty =
         AvaloniaProperty.Register<TabShape, double>(nameof(OutlineThickness), 1.0);
 
+    /// <summary>
+    /// Width (px) of the light and dark bevel inside the outline.
+    /// </summary>
+    public static readonly StyledProperty<double> BevelThicknessProperty =
+        AvaloniaProperty.Register<TabShape, double>(nameof(BevelThickness), 2.0);
+
     static TabShape()
     {
         AffectsRender<TabShape>(BackgroundProperty, SelectedBackgroundProperty, IsSelectedProperty, LightBrushProperty,
             DarkBrushProperty, OuterLineBrushProperty, FlipVerticalProperty, SlantWidthProperty, CornerRadiusProperty,
-            OutlineThicknessProperty);
+            OutlineThicknessProperty, BevelThicknessProperty);
         AffectsMeasure<TabShape>(SlantWidthProperty, CornerRadiusProperty);
     }
 
     public TabShape()
     {
         UseLayoutRounding = true;
+        // Slanted edges one or two pixels wide turn to gray smears when antialiased; IRIX drew
+        // them as stepped pixels.
+        RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
     }
 
     public IBrush? Background
@@ -136,60 +146,94 @@ public sealed class TabShape : Control
         set => SetValue(OutlineThicknessProperty, value);
     }
 
+    public double BevelThickness
+    {
+        get => GetValue(BevelThicknessProperty);
+        set => SetValue(BevelThicknessProperty, value);
+    }
+
     public override void Render(DrawingContext context)
     {
-        var w = Bounds.Width;
-        var h = Bounds.Height;
-        if (w <= 0 || h <= 0)
-            return;
-
-        var s = Math.Min(SlantWidth, w / 2);
-        var r = Math.Min(CornerRadius, Math.Min(s, h / 2));
-        var flip = FlipVertical;
-
-        var outline = OuterLineBrush ?? Brushes.Black;
         var face = (IsSelected ? SelectedBackground : Background) ?? Brushes.Gray;
-        var t = OutlineThickness;
-
-        // Hard outline silhouette, then the face inset by the outline thickness.
-        context.DrawGeometry(outline, null, BuildTab(w, h, s, r, flip));
-        context.DrawGeometry(face, null,
-            BuildTab(w - 2 * t, h - 2 * t, Math.Max(0, s - t), Math.Max(0, r), flip, t, t));
+        Draw(context, new Rect(Bounds.Size), FlipVertical, face, LightBrush, DarkBrush,
+            OuterLineBrush ?? Brushes.Black, SlantWidth, CornerRadius, OutlineThickness, BevelThickness);
     }
 
     /// <summary>
-    /// Builds the trapezoid path. <paramref name="ox"/>/<paramref name="oy"/> offset the
-    /// whole shape (used to inset the face inside the outline).
+    /// Draws one tab into <paramref name="rect"/>: hard outline, then the bevel, then the face.
     /// </summary>
-    /// <param name="w"></param>
-    /// <param name="h"></param>
-    /// <param name="s"></param>
-    /// <param name="r"></param>
-    /// <param name="flip"></param>
-    /// <param name="ox"></param>
-    /// <param name="oy"></param>
-    /// <returns></returns>
-    private static StreamGeometry BuildTab(double w, double h, double s, double r, bool flip, double ox = 0,
-        double oy = 0)
+    /// <remarks>
+    /// Shared with <see cref="NotebookTabPanel"/>, which draws the slanted edges of hidden
+    /// tabs at the ends of the strip with the same strokes.
+    /// The base (the edge against the page) gets no outline or bevel. The page draws that
+    /// edge itself, and leaves a gap where the selected tab sits, so the selected tab's face
+    /// runs on into the page. The leading slant is lit. On a top tab the narrow edge is lit
+    /// too; on a bottom tab it is shaded, as are both trailing edges.
+    /// </remarks>
+    public static void Draw(DrawingContext context, Rect rect, bool flip, IBrush face, IBrush? light,
+        IBrush? dark, IBrush outline, double slant, double corner, double outlineThickness, double bevel)
     {
-        // Top-tab points (narrow edge at y=0, wide base at y=h), clockwise from bottom-left.
-        var pts = new[]
-        {
-            new Point(0, h), // P0 bottom-left (wide base)
-            new Point(s, r), // P1 up the left slant
-            new Point(s + r, 0), // P2 chamfer top-left
-            new Point(w - s - r, 0), // P3 narrow top
-            new Point(w - s, r), // P4 chamfer top-right
-            new Point(w, h), // P5 down the right slant
-        };
+        var w = rect.Width;
+        var h = rect.Height;
+        if (w <= 0 || h <= 0)
+            return;
 
+        var s = Math.Min(slant, w / 2);
+        var r = Math.Min(corner, Math.Min(s, h / 2));
+        var t = outlineThickness;
+        var b = bevel;
+
+        var outer = Outline(w, h, s, r, 0);
+        var inner = Outline(w, h, s, r, t);
+        var faceEdge = Outline(w, h, s, r, t + b);
+
+        context.DrawGeometry(outline, null, Build(outer, rect, h, flip));
+        if (b > 0)
+        {
+            context.DrawGeometry(dark ?? outline, null, Build(inner, rect, h, flip));
+            if (light is not null)
+            {
+                // The lit band: from the base up the leading slant and round its corner, then
+                // along the narrow edge as well when that edge faces up.
+                var lastLit = flip ? 2 : 3;
+                var band = new List<Point>();
+                for (var i = 0; i <= lastLit; i++)
+                    band.Add(inner[i]);
+                for (var i = lastLit; i >= 0; i--)
+                    band.Add(faceEdge[i]);
+                context.DrawGeometry(light, null, Build(band, rect, h, flip));
+            }
+        }
+
+        context.DrawGeometry(face, null, Build(faceEdge, rect, h, flip));
+    }
+
+    /// <summary>
+    /// The silhouette of a top tab (narrow edge at y=0, wide base at y=h), inset by
+    /// <paramref name="d"/> on every side but the base. Clockwise from the bottom-left.
+    /// </summary>
+    private static List<Point> Outline(double w, double h, double s, double r, double d) =>
+    [
+        new(d, h), // wide base, left
+        new(s + d, r + d), // up the leading slant
+        new(s + r + d, d), // corner into the narrow edge
+        new(w - s - r - d, d), // along the narrow edge
+        new(w - s - d, r + d), // corner out of it
+        new(w - d, h), // down the trailing slant
+    ];
+
+    /// <summary>
+    /// A closed path through <paramref name="points"/>, turned upside down for a bottom tab
+    /// and moved to <paramref name="rect"/>.
+    /// </summary>
+    private static StreamGeometry Build(IReadOnlyList<Point> points, Rect rect, double h, bool flip)
+    {
         var geo = new StreamGeometry();
         using var gc = geo.Open();
-        for (var i = 0; i < pts.Length; i++)
+        for (var i = 0; i < points.Count; i++)
         {
-            var p = pts[i];
-            var y = flip ? h - p.Y : p.Y;
-            var pt = new Point(p.X + ox, y + oy);
+            var p = points[i];
+            var pt = new Point(rect.X + p.X, rect.Y + (flip ? h - p.Y : p.Y));
             if (i == 0)
                 gc.BeginFigure(pt, true);
             else

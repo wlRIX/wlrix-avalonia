@@ -226,6 +226,62 @@
                     </StackPanel>
                 </wlrix:BevelBorder>
 
+
+                <!-- Notebook tabs -->
+                <wlrix:BevelBorder Bevel="Etched" BevelThickness="2"
+                                 Background="{DynamicResource WlrixFace}"
+                                 LightBrush="{DynamicResource WlrixTopShadow}"
+                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
+                                 Padding="12">
+                    <StackPanel Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Notebook (narrow the window to overflow the tabs)" FontWeight="Bold"
+                                       VerticalAlignment="Center" />
+                            <CheckBox Name="TabsAtBottom" Content="Tabs at bottom" IsChecked="True" />
+                        </StackPanel>
+                        <wlrix:NotebookTabControl Name="Notebook" Height="140" TabStripPlacement="Bottom">
+                            <TabItem Header="Applications">
+                                <TextBlock Text="Applications icons would be here." />
+                            </TabItem>
+                            <TabItem Header="Collaboration">
+                                <TextBlock Text="Collaboration icons would be here." />
+                            </TabItem>
+                            <TabItem Header="ControlPanels">
+                                <TextBlock Text="ControlPanels icons would be here." />
+                            </TabItem>
+                            <TabItem Header="DesktopTools">
+                                <TextBlock Text="DesktopTools icons would be here." />
+                            </TabItem>
+                            <TabItem Header="Interoperability">
+                                <TextBlock Text="Interoperability icons would be here." />
+                            </TabItem>
+                            <TabItem Header="MediaTools">
+                                <TextBlock Text="MediaTools icons would be here." />
+                            </TabItem>
+                            <TabItem Header="Printing">
+                                <TextBlock Text="Printing icons would be here." />
+                            </TabItem>
+                            <TabItem Header="SupportTools">
+                                <TextBlock Text="SupportTools icons would be here." />
+                            </TabItem>
+                            <TabItem Header="WebTools">
+                                <TextBlock Text="WebTools icons would be here." />
+                            </TabItem>
+                            <TabItem Header="WhatsNew">
+                                <TextBlock Text="WhatsNew icons would be here." />
+                            </TabItem>
+                            <TabItem Header="Utilities">
+                                <TextBlock Text="Utilities icons would be here." />
+                            </TabItem>
+                            <TabItem Header="Games">
+                                <TextBlock Text="Games icons would be here." />
+                            </TabItem>
+                            <TabItem Header="Demos">
+                                <TextBlock Text="Demos icons would be here." />
+                            </TabItem>
+                        </wlrix:NotebookTabControl>
+                    </StackPanel>
+                </wlrix:BevelBorder>
             </StackPanel>
         </ScrollViewer>
     </DockPanel>

@@ -31,6 +31,7 @@
                     <Panel>
                         <ContentPresenter Name="PART_HeaderPresenter"
                                           Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
                                           Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="Center">
                             <ContentPresenter.DataTemplates>
@@ -145,6 +146,7 @@
                         <ContentPresenter Name="PART_HeaderPresenter"
                                           Grid.Column="2"
                                           Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
                                           VerticalAlignment="Center">
                             <ContentPresenter.DataTemplates>
                                 <DataTemplate DataType="x:String">
@@ -253,6 +255,7 @@
                 <ControlTemplate>
                     <StackPanel>
                         <ContentPresenter Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
                                           HorizontalAlignment="Center"
                                           Margin="8,3,8,2"
                                           FontWeight="Bold"

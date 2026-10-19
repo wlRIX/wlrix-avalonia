@@ -23,6 +23,9 @@ public partial class MainWindow : Window
                 ApplyScheme(scheme);
         };
 
+        TabsAtBottom.IsCheckedChanged += (_, _) =>
+            Notebook.TabStripPlacement = TabsAtBottom.IsChecked == true ? Dock.Bottom : Dock.Top;
+
         // Error: just an acknowledgment — OK only.
         ErrorDialogButton.Click += (_, _) =>
             MessageDialog.ShowAsync(this, DialogType.Error, "Default error message",

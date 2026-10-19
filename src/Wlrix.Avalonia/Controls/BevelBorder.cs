@@ -41,11 +41,30 @@ public class BevelBorder : Decorator
     public static readonly StyledProperty<IBrush?> OuterLineBrushProperty =
         AvaloniaProperty.Register<BevelBorder, IBrush?>(nameof(OuterLineBrush));
 
+    /// <summary>The edge that <see cref="GapStart"/> and <see cref="GapLength"/> open.</summary>
+    public static readonly StyledProperty<Dock> GapEdgeProperty =
+        AvaloniaProperty.Register<BevelBorder, Dock>(nameof(GapEdge), Dock.Top);
+
+    /// <summary>
+    /// Offset, in pixels along <see cref="GapEdge"/>, of a break in the bevel and outline.
+    /// </summary>
+    /// <remarks>
+    /// The notebook page uses this where the selected tab joins it: across the tab's width
+    /// the face runs on into the tab, with no line between them.
+    /// </remarks>
+    public static readonly StyledProperty<double> GapStartProperty =
+        AvaloniaProperty.Register<BevelBorder, double>(nameof(GapStart));
+
+    /// <summary>Length of the break in the edge. Zero (the default) draws an unbroken edge.</summary>
+    public static readonly StyledProperty<double> GapLengthProperty =
+        AvaloniaProperty.Register<BevelBorder, double>(nameof(GapLength));
+
     static BevelBorder()
     {
         AffectsRender<BevelBorder>(
             BevelProperty, BevelThicknessProperty, OuterLineThicknessProperty,
-            BackgroundProperty, LightBrushProperty, DarkBrushProperty, OuterLineBrushProperty);
+            BackgroundProperty, LightBrushProperty, DarkBrushProperty, OuterLineBrushProperty,
+            GapEdgeProperty, GapStartProperty, GapLengthProperty);
         AffectsMeasure<BevelBorder>(
             BevelProperty, BevelThicknessProperty, OuterLineThicknessProperty);
     }
@@ -97,6 +116,24 @@ public class BevelBorder : Decorator
         set => SetValue(OuterLineBrushProperty, value);
     }
 
+    public Dock GapEdge
+    {
+        get => GetValue(GapEdgeProperty);
+        set => SetValue(GapEdgeProperty, value);
+    }
+
+    public double GapStart
+    {
+        get => GetValue(GapStartProperty);
+        set => SetValue(GapStartProperty, value);
+    }
+
+    public double GapLength
+    {
+        get => GetValue(GapLengthProperty);
+        set => SetValue(GapLengthProperty, value);
+    }
+
     private double EdgeThickness =>
         (Bevel == WlrixBevel.None ? 0 : BevelThickness) + OuterLineThickness;
 
@@ -130,6 +167,39 @@ public class BevelBorder : Decorator
     }
 
     public override void Render(DrawingContext context)
+    {
+        RenderEdges(context);
+        RenderGap(context);
+    }
+
+    /// <summary>
+    /// Paints the face back over the edge across the gap. Painted over rather than left
+    /// out of each edge, because the bevel styles each lay their edges down differently and
+    /// one fill afterwards covers all of them the same way.
+    /// </summary>
+    private void RenderGap(DrawingContext context)
+    {
+        var length = GapLength;
+        var depth = EdgeThickness;
+        if (length <= 0 || depth <= 0 || Background is not { } face)
+            return;
+
+        var w = Bounds.Width;
+        var h = Bounds.Height;
+        var start = GapStart;
+        var gap = GapEdge switch
+        {
+            Dock.Top => new Rect(start, 0, length, depth),
+            Dock.Bottom => new Rect(start, h - depth, length, depth),
+            Dock.Left => new Rect(0, start, depth, length),
+            _ => new Rect(w - depth, start, depth, length),
+        };
+        gap = gap.Intersect(new Rect(0, 0, w, h));
+        if (gap.Width > 0 && gap.Height > 0)
+            context.FillRectangle(face, gap);
+    }
+
+    private void RenderEdges(DrawingContext context)
     {
         var w = Bounds.Width;
         var h = Bounds.Height;
