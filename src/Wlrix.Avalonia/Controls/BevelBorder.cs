@@ -177,6 +177,12 @@ public class BevelBorder : Decorator
     /// out of each edge, because the bevel styles each lay their edges down differently and
     /// one fill afterwards covers all of them the same way.
     /// </summary>
+    /// <remarks>
+    /// Either side of the gap, the bevel's tone also covers the outline for the bevel's
+    /// width. What joins the page there (a notebook tab) carries the same band down its own
+    /// sides, so the page's bevel turns the corner into it instead of being cut off square by
+    /// the outline.
+    /// </remarks>
     private void RenderGap(DrawingContext context)
     {
         var length = GapLength;
@@ -184,19 +190,37 @@ public class BevelBorder : Decorator
         if (length <= 0 || depth <= 0 || Background is not { } face)
             return;
 
-        var w = Bounds.Width;
-        var h = Bounds.Height;
+        var bounds = new Rect(Bounds.Size);
         var start = GapStart;
-        var gap = GapEdge switch
+        var shoulder = Bevel is WlrixBevel.Raised or WlrixBevel.Sunken ? BevelThickness : 0;
+        if (shoulder > 0 && EdgeBrush(GapEdge) is { } band)
+            FillAlongEdge(context, band, bounds, start - shoulder, length + 2 * shoulder, depth);
+        FillAlongEdge(context, face, bounds, start, length, depth);
+    }
+
+    /// <summary>The bevel brush this border paints on <paramref name="edge"/>.</summary>
+    private IBrush? EdgeBrush(Dock edge)
+    {
+        var lit = edge is Dock.Top or Dock.Left;
+        if (Bevel == WlrixBevel.Sunken)
+            lit = !lit;
+        return lit ? LightBrush : DarkBrush;
+    }
+
+    /// <summary>Fills a span of <paramref name="edge"/>'s depth, clipped to the control.</summary>
+    private void FillAlongEdge(DrawingContext context, IBrush brush, Rect bounds, double start,
+        double length, double depth)
+    {
+        var rect = GapEdge switch
         {
             Dock.Top => new Rect(start, 0, length, depth),
-            Dock.Bottom => new Rect(start, h - depth, length, depth),
+            Dock.Bottom => new Rect(start, bounds.Height - depth, length, depth),
             Dock.Left => new Rect(0, start, depth, length),
-            _ => new Rect(w - depth, start, depth, length),
+            _ => new Rect(bounds.Width - depth, start, depth, length),
         };
-        gap = gap.Intersect(new Rect(0, 0, w, h));
-        if (gap.Width > 0 && gap.Height > 0)
-            context.FillRectangle(face, gap);
+        rect = rect.Intersect(bounds);
+        if (rect.Width > 0 && rect.Height > 0)
+            context.FillRectangle(brush, rect);
     }
 
     private void RenderEdges(DrawingContext context)

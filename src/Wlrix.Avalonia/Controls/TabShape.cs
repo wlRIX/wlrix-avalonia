@@ -163,12 +163,12 @@ public sealed class TabShape : Control
     /// Draws one tab into <paramref name="rect"/>: hard outline, then the bevel, then the face.
     /// </summary>
     /// <remarks>
-    /// Shared with <see cref="NotebookTabPanel"/>, which draws the slanted edges of hidden
+    /// Shared with <see cref="NotebookOverflowEdges"/>, which draws the slanted edges of hidden
     /// tabs at the ends of the strip with the same strokes.
     /// The base (the edge against the page) gets no outline or bevel. The page draws that
     /// edge itself, and leaves a gap where the selected tab sits, so the selected tab's face
-    /// runs on into the page. The leading slant is lit. On a top tab the narrow edge is lit
-    /// too; on a bottom tab it is shaded, as are both trailing edges.
+    /// runs on into the page. The bevel is one band on every other side: shaded on a bottom tab
+    /// (<paramref name="flip"/>), lit on a top tab.
     /// </remarks>
     public static void Draw(DrawingContext context, Rect rect, bool flip, IBrush face, IBrush? light,
         IBrush? dark, IBrush outline, double slant, double corner, double outlineThickness, double bevel)
@@ -188,22 +188,12 @@ public sealed class TabShape : Control
         var faceEdge = Outline(w, h, s, r, t + b);
 
         context.DrawGeometry(outline, null, Build(outer, rect, h, flip));
+        // One band all the way round, as IRIX shaded its notebook tabs: lit from straight
+        // above rather than from the top left like the other bevels. A bottom tab faces away
+        // from that light on every side, a top tab towards it. The band is the same tone as
+        // the page's edge on that side, so the page's bevel runs on down the tab's sides.
         if (b > 0)
-        {
-            context.DrawGeometry(dark ?? outline, null, Build(inner, rect, h, flip));
-            if (light is not null)
-            {
-                // The lit band: from the base up the leading slant and round its corner, then
-                // along the narrow edge as well when that edge faces up.
-                var lastLit = flip ? 2 : 3;
-                var band = new List<Point>();
-                for (var i = 0; i <= lastLit; i++)
-                    band.Add(inner[i]);
-                for (var i = lastLit; i >= 0; i--)
-                    band.Add(faceEdge[i]);
-                context.DrawGeometry(light, null, Build(band, rect, h, flip));
-            }
-        }
+            context.DrawGeometry((flip ? dark : light) ?? outline, null, Build(inner, rect, h, flip));
 
         context.DrawGeometry(face, null, Build(faceEdge, rect, h, flip));
     }

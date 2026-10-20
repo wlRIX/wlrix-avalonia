@@ -5,8 +5,8 @@ using Avalonia.Media;
 namespace Wlrix.Avalonia.Controls;
 
 /// <summary>
-/// The stacks of slanted tab edges at the ends of a notebook strip, shown at whichever end
-/// has tabs left out. It sits behind the strip, so the end tabs overlap
+/// The stacks of slanted tab edges at the ends of a notebook strip, one edge for each tab
+/// left out on that side, up to a limit. It sits behind the strip, so the end tabs overlap
 /// the stacks. It only draws: <see cref="NotebookTabPanel"/> says where the stacks go and
 /// handles clicks on them.
 /// </summary>

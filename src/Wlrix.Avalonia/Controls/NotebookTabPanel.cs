@@ -53,11 +53,12 @@ public class NotebookTabPanel : Panel
         AvaloniaProperty.Register<NotebookTabPanel, double>(nameof(EdgeSpacing), 8.0);
 
     /// <summary>
-    /// Edges drawn in a stack of hidden tabs. The stack is a fixed marker, as in IRIX, not a
-    /// count: one hidden tab or twenty, it shows the same edges.
+    /// Most edges drawn in a stack of hidden tabs: one per hidden tab, up to this many. The
+    /// space a stack takes is reserved at this size, so the strip does not shift as tabs come
+    /// and go.
     /// </summary>
-    public static readonly StyledProperty<int> OverflowEdgesProperty =
-        AvaloniaProperty.Register<NotebookTabPanel, int>(nameof(OverflowEdges), 3);
+    public static readonly StyledProperty<int> MaxOverflowEdgesProperty =
+        AvaloniaProperty.Register<NotebookTabPanel, int>(nameof(MaxOverflowEdges), 3);
 
     /// <summary>
     /// Width, in pixels, of the page's edge (outline and bevel) the selected tab breaks
@@ -78,7 +79,7 @@ public class NotebookTabPanel : Panel
 
     static NotebookTabPanel()
     {
-        AffectsMeasure<NotebookTabPanel>(OverlapProperty, EdgeSpacingProperty, OverflowEdgesProperty,
+        AffectsMeasure<NotebookTabPanel>(OverlapProperty, EdgeSpacingProperty, MaxOverflowEdgesProperty,
             SlantWidthProperty);
     }
 
@@ -107,10 +108,10 @@ public class NotebookTabPanel : Panel
         set => SetValue(EdgeSpacingProperty, value);
     }
 
-    public int OverflowEdges
+    public int MaxOverflowEdges
     {
-        get => GetValue(OverflowEdgesProperty);
-        set => SetValue(OverflowEdgesProperty, value);
+        get => GetValue(MaxOverflowEdgesProperty);
+        set => SetValue(MaxOverflowEdgesProperty, value);
     }
 
     public double SeamInset
@@ -198,7 +199,7 @@ public class NotebookTabPanel : Panel
         foreach (var child in children)
             height = Math.Max(height, child.DesiredSize.Height);
 
-        _edgeReserve = SlantWidth + EdgeSpacing * Math.Max(0, OverflowEdges);
+        _edgeReserve = SlantWidth + EdgeSpacing * Math.Max(0, MaxOverflowEdges);
         var full = RowWidth(0, n - 1);
 
         if (n == 0)
@@ -425,8 +426,8 @@ public class NotebookTabPanel : Panel
             var horizontal = IsHorizontal;
             var origin = this.TranslatePoint(default, edges) ?? default;
             edges.Update(
-                horizontal && HiddenBefore > 0 ? OverflowEdges : 0, _leadingEdges.Translate(origin),
-                horizontal && HiddenAfter > 0 ? OverflowEdges : 0, _trailingEdges.Translate(origin),
+                horizontal ? Math.Min(HiddenBefore, MaxOverflowEdges) : 0, _leadingEdges.Translate(origin),
+                horizontal ? Math.Min(HiddenAfter, MaxOverflowEdges) : 0, _trailingEdges.Translate(origin),
                 IsBottom, SlantWidth, Overlap, EdgeSpacing);
         }
 
