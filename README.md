@@ -17,7 +17,7 @@ is the default, as it reads closest to the original on an sRGB display.
 |-------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
 | `src/Wlrix.Avalonia`                      | The theme: the `BevelBorder` primitive, the `PathBar` control, control templates, color schemes, and the `WlrixTheme` style. |
 | `src/Wlrix.Avalonia.Controls.ColorPicker` | A separate control library with the IRIX `ColorChooser` (hexagon color picker) and its `ColorPickerTheme`.                   |
-| `src/Wlrix.Avalonia.Dialogs`              | Reusable SGI/IRIX dialog windows — the `MessageDialog` (Error / Question / Warning / Information).                           |
+| `src/Wlrix.Avalonia.Dialogs`              | Reusable SGI/IRIX dialog windows — `MessageDialog` (Error / Question / Warning / Information) and the one-line `PromptDialog`. |
 | `samples/Wlrix.Demo`                      | A gallery app that shows the controls and lets you switch color schemes at runtime.                                          |
 | `tools/shot`                              | A headless (display-free) Skia renderer used to regenerate the screenshots above.                                            |
 
@@ -166,6 +166,15 @@ type-derived title and the English defaults:
 await MessageDialog.ShowAsync(owner, DialogType.Warning, "Datei nicht gefunden",
     title: "Achtung", okText: "Ja", cancelText: "Nein", helpText: "Hilfe",
     onHelp: (_, _) => ShowHelp());
+```
+
+`PromptDialog` asks for one line of text — a new name, say. It returns the trimmed
+answer, or `null` if the user canceled or left it blank. It plays the Question sound
+when it opens, and takes its button text the same way:
+
+```csharp
+var name = await PromptDialog.ShowAsync(owner, "New Page", "Name of the new page:",
+    okText: "OK", cancelText: "Cancel");
 ```
 
 `Title`, `Message`, `OkText`, `CancelText`, `HelpText` and `DialogType` are all
