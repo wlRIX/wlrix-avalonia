@@ -4,33 +4,65 @@
                     xmlns:wlrix="https://vic485.xyz/Wlrix.Avalonia">
     <conv:IndentConverter x:Key="WlrixTreeIndentConverter" Indent="16" />
 
-    <!-- Square +/- expander toggle, IRIX style. -->
+    <!-- The expander's colors. Fixed rather than scheme colors, as IRIX's were: the arrow is
+         icon art, white with a dark fold, and it reads the same on every view background. -->
+    <SolidColorBrush x:Key="WlrixTreeArrowFace" Color="#ffffff" />
+    <SolidColorBrush x:Key="WlrixTreeArrowFold" Color="#505450" />
+    <SolidColorBrush x:Key="WlrixTreeArrowFoldOpen" Color="#a8a8a8" />
+
+    <!-- IRIX's folded-arrow expander: closed, the arrow points right with its tail folded under;
+         open, the fold swings down and the arrow points down the branch.
+
+         Drawn from _docs/svg-icons/arrow.svg and open.arrow.svg as paths rather than an image so
+         the outline stays one crisp pixel at row size. Both shapes are mapped from the art at a
+         quarter of its size onto one shared origin, with the closed arrow centered in the 12x18
+         box. So the open one unfolds from the same spot, as in the original, and its tip reaches
+         a pixel or two past the row on either side; the template does not clip, so it shows. -->
     <ControlTheme x:Key="WlrixTreeExpandToggle" TargetType="ToggleButton">
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Width" Value="11" />
-        <Setter Property="Height" Value="11" />
+        <Setter Property="Width" Value="12" />
+        <Setter Property="Height" Value="18" />
+        <!-- Transparent, not null, so the whole box takes the click and not just the strokes. -->
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
-                <wlrix:BevelBorder Bevel="Raised" BevelThickness="1" OuterLineThickness="1"
-                                 Background="{DynamicResource WlrixFace}"
-                                 LightBrush="{DynamicResource WlrixTopShadow}"
-                                 DarkBrush="{DynamicResource WlrixBottomShadow}"
-                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
-                    <Panel>
-                        <!-- Horizontal bar (always present = the minus) -->
-                        <Rectangle Width="5" Height="1"
-                                   Fill="{DynamicResource WlrixForeground}"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <!-- Vertical bar (present only when collapsed = makes a plus) -->
-                        <Rectangle Name="VBar" Width="1" Height="5"
-                                   Fill="{DynamicResource WlrixForeground}"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Panel Background="{TemplateBinding Background}">
+                    <Panel Name="PART_Closed">
+                        <Path Data="M0.50,13.42 L8.52,9.41 L8.52,2.95 L0.50,6.96 Z"
+                              Fill="{DynamicResource WlrixTreeArrowFace}"
+                              Stroke="{DynamicResource WlrixOuterLine}" StrokeThickness="1"
+                              StrokeJoin="Miter" />
+                        <Path Data="M3.17,9.04 L0.50,13.42 L8.52,9.41 L11.19,5.03 Z"
+                              Fill="{DynamicResource WlrixTreeArrowFold}"
+                              Stroke="{DynamicResource WlrixOuterLine}" StrokeThickness="1"
+                              StrokeJoin="Miter" />
+                        <Path Data="M3.17,12.09 L7.18,15.05 L11.19,8.08 L11.19,5.03 L3.17,9.04 Z"
+                              Fill="{DynamicResource WlrixTreeArrowFace}"
+                              Stroke="{DynamicResource WlrixOuterLine}" StrokeThickness="1"
+                              StrokeJoin="Miter" />
                     </Panel>
-                </wlrix:BevelBorder>
+                    <Panel Name="PART_Open" IsVisible="False">
+                        <Path Data="M0.50,9.67 L8.52,5.66 L8.52,-0.80 L0.50,3.21 Z"
+                              Fill="{DynamicResource WlrixTreeArrowFace}"
+                              Stroke="{DynamicResource WlrixOuterLine}" StrokeThickness="1"
+                              StrokeJoin="Miter" />
+                        <Path Data="M3.17,13.31 L0.50,9.67 L8.52,5.66 L11.19,9.30 Z"
+                              Fill="{DynamicResource WlrixTreeArrowFoldOpen}"
+                              Stroke="{DynamicResource WlrixOuterLine}" StrokeThickness="1"
+                              StrokeJoin="Miter" />
+                        <Path Data="M3.17,16.35 L7.18,19.32 L11.19,12.35 L11.19,9.30 L3.17,13.31 Z"
+                              Fill="{DynamicResource WlrixTreeArrowFace}"
+                              Stroke="{DynamicResource WlrixOuterLine}" StrokeThickness="1"
+                              StrokeJoin="Miter" />
+                    </Panel>
+                </Panel>
             </ControlTemplate>
         </Setter>
-        <Style Selector="^:checked /template/ Rectangle#VBar">
+        <Style Selector="^:checked /template/ Panel#PART_Closed">
             <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="^:checked /template/ Panel#PART_Open">
+            <Setter Property="IsVisible" Value="True" />
         </Style>
     </ControlTheme>
 
@@ -67,9 +99,11 @@
             </ControlTemplate>
         </Setter>
 
-        <!-- Leaf nodes hide the toggle -->
+        <!-- Leaf nodes hide the toggle but keep its room, so a leaf's name lines up with the
+             names of its expandable siblings rather than sitting an arrow's width left of them. -->
         <Style Selector="^:empty /template/ ToggleButton#PART_ExpandCollapseChevron">
-            <Setter Property="IsVisible" Value="False" />
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="IsHitTestVisible" Value="False" />
         </Style>
 
         <Style Selector="^:selected /template/ Border#PART_LayoutRoot">
