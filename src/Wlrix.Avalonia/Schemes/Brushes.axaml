@@ -59,4 +59,10 @@
     <SolidColorBrush x:Key="WlrixLinkActive" Color="{DynamicResource WlrixLinkActiveColor}" />
     <SolidColorBrush x:Key="WlrixReadOnlyPanel" Color="{DynamicResource WlrixReadOnlyPanelColor}" />
     <SolidColorBrush x:Key="WlrixReadWritePanel" Color="{DynamicResource WlrixReadWritePanelColor}" />
+
+    <!-- The lit edges of a hovered or checked check box, in CheckBox and in menus. Translucent
+         white rather than a scheme color, because the face there is already TopShadow, the
+         lightest tone a scheme names, and the edge has to be lighter still. Over Classic's
+         #e5e5e5 face this gives IRIX's #f0f0f0. -->
+    <SolidColorBrush x:Key="WlrixCheckBoxLitEdge" Color="#6bffffff" />
 </ResourceDictionary>

@@ -87,9 +87,10 @@
                     <Grid Margin="{TemplateBinding Padding}"
                           ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                         <!-- Check / radio marker. IRIX menus draw the same indicators as the
-                             stand-alone controls, only smaller: a square that sinks and shows
-                             the red check mark for a toggle (CheckBox.axaml), and a diamond
-                             that sinks and shows the radio mark for one-of-many (RadioButton.axaml).
+                             stand-alone controls, only smaller: a raised square that lightens
+                             and shows the red check for a toggle (CheckBox.axaml), and a
+                             diamond that sinks and shows the radio mark for one-of-many
+                             (RadioButton.axaml).
                              Both are always in the template; the :toggle / :radio styles below
                              pick one. -->
                         <ContentControl Name="PART_ToggleIconPresenter"
@@ -100,7 +101,7 @@
                                         VerticalAlignment="Center">
                             <Panel>
                                 <wlrix:BevelBorder Name="ToggleBox"
-                                                 Width="11" Height="11"
+                                                 Width="13" Height="13"
                                                  HorizontalAlignment="Center"
                                                  VerticalAlignment="Center"
                                                  IsVisible="False"
@@ -110,11 +111,24 @@
                                                  Background="{DynamicResource WlrixFace}"
                                                  LightBrush="{DynamicResource WlrixTopShadow}"
                                                  DarkBrush="{DynamicResource WlrixBottomShadow}"
-                                                 OuterLineBrush="{DynamicResource WlrixOuterLine}">
-                                    <Border Name="ToggleMark"
-                                            Background="{DynamicResource WlrixCheck}"
-                                            IsVisible="False" />
-                                </wlrix:BevelBorder>
+                                                 OuterLineBrush="{DynamicResource WlrixOuterLine}" />
+                                <!-- CheckBox.axaml's check, scaled from its 15px box to this
+                                     13px one; at 11px it blurred into a smear. Over the box, unclipped, so the tip overhangs the
+                                     corner as it does there. -->
+                                <Canvas Name="ToggleCheck"
+                                        Width="13" Height="13"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        RenderOptions.EdgeMode="Aliased"
+                                        IsVisible="False">
+                                    <Path Data="M3.89,4.78 L5.47,5.31 L6.26,5.74 L8.09,7.31 L8.22,8.47 L6.38,9.72 L5.82,8.39 L5.32,7.74 L4.43,7.36 L3.55,7.19 L2.60,7.12 L1.30,7.22 Z"
+                                          Classes="Mark" />
+                                    <Path Data="M6.66,6.07 L7.18,5.56 L8.24,4.67 L9.22,4.01 L10.47,3.24 L13.85,1.30 L13.03,3.09 L10.65,4.81 L9.32,5.79 L8.13,7.25 L7.01,8.74 Z"
+                                          Classes="Mark" />
+                                    <Path Data="M13.03,3.09 L10.65,4.81 L9.32,5.79 L8.13,7.25 L8.22,8.47 L6.37,9.72 L6.08,10.03"
+                                          Stroke="{DynamicResource WlrixOuterLine}"
+                                          StrokeThickness="1" />
+                                </Canvas>
                                 <wlrix:BevelBorder Name="RadioBox"
                                                  Width="10" Height="10"
                                                  HorizontalAlignment="Center"
@@ -224,12 +238,22 @@
         <Style Selector="^:toggle /template/ wlrix|BevelBorder#ToggleBox">
             <Setter Property="IsVisible" Value="True" />
         </Style>
+        <!-- Checked stays raised with the light face, as CheckBox does. -->
         <Style Selector="^:toggle:checked /template/ wlrix|BevelBorder#ToggleBox">
-            <Setter Property="Bevel" Value="Sunken" />
-            <Setter Property="Background" Value="{DynamicResource WlrixSelect}" />
+            <Setter Property="Background" Value="{DynamicResource WlrixTopShadow}" />
+            <Setter Property="LightBrush" Value="{DynamicResource WlrixCheckBoxLitEdge}" />
         </Style>
-        <Style Selector="^:toggle:checked /template/ Border#ToggleMark">
+        <Style Selector="^:toggle:checked /template/ Canvas#ToggleCheck">
             <Setter Property="IsVisible" Value="True" />
+        </Style>
+        <Style Selector="^ /template/ Canvas#ToggleCheck > Path.Mark">
+            <Setter Property="Fill" Value="{DynamicResource WlrixCheck}" />
+            <Setter Property="Stroke" Value="{DynamicResource WlrixCheck}" />
+            <Setter Property="StrokeThickness" Value="1" />
+        </Style>
+        <Style Selector="^:disabled /template/ Canvas#ToggleCheck > Path.Mark">
+            <Setter Property="Fill" Value="{DynamicResource WlrixDisabledCheck}" />
+            <Setter Property="Stroke" Value="{DynamicResource WlrixDisabledCheck}" />
         </Style>
         <Style Selector="^:radio /template/ ContentControl#PART_ToggleIconPresenter">
             <Setter Property="IsVisible" Value="True" />
