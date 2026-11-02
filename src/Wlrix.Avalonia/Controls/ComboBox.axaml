@@ -77,7 +77,12 @@
                         </DockPanel>
                     </wlrix:BevelBorder>
 
+                    <!-- Light dismiss, as Fluent's has: a click outside closes the list. Without it
+                         the list stayed open, and on Wayland, where it holds the popup grab,
+                         opening a second combo box over it was a protocol error that dropped the
+                         app's connection. -->
                     <Popup Name="PART_Popup"
+                           IsLightDismissEnabled="True"
                            WindowManagerAddShadowHint="False"
                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                            MaxHeight="{TemplateBinding MaxDropDownHeight}"
